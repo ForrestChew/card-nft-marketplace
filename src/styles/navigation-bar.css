@@ -1,0 +1,27 @@
+.navbar-items-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style-type: none;
+  width: 60%;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid white;
+}
+
+.list-item {
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  text-decoration: none;
+}
+
+.list-item-active {
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+}
