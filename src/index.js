@@ -5,12 +5,12 @@ import { MoralisProvider } from 'react-moralis';
 import App from './components/App';
 
 const MORALIS_SERVER_URL = process.env.REACT_APP_MORALIS_SERVER_URL;
-const MORLIAS_APP_ID = process.env.REACT_APP_MORALIS_APP_ID;
+const MORALIS_APP_ID = process.env.REACT_APP_MORALIS_APP_ID;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <MoralisProvider serverUrl={MORALIS_SERVER_URL} appId={MORLIAS_APP_ID}>
+    <MoralisProvider serverUrl={MORALIS_SERVER_URL} appId={MORALIS_APP_ID}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
