@@ -5,7 +5,7 @@ import About from './About';
 import Marketplace from './Marketplace';
 import LeaderBoard from './LeaderBoard';
 import Profile from './Profile';
-import '.././styles/app.css';
+import '../styles/app.css';
 const App = () => {
   return (
     <>
