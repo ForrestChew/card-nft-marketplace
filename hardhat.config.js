@@ -1,15 +1,10 @@
 require('@nomiclabs/hardhat-waffle');
-// require('hardhat-gas-reporter');
+require('dotenv').config();
+require('@nomiclabs/hardhat-etherscan');
+require('hardhat-gas-reporter');
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
+const mumabaiAccount = process.env.PRIVATE_KEY;
+const mumbaiUrl = process.env.MUMBAI_URL;
 
 module.exports = {
   solidity: {
@@ -19,6 +14,17 @@ module.exports = {
         enabled: true,
         runs: 10000,
       },
+    },
+  },
+  networks: {
+    mumbai: {
+      url: mumbaiUrl,
+      accounts: [mumabaiAccount],
+    },
+  },
+  etherscan: {
+    apiKey: {
+      polygonMumbai: process.env.POLYGONSCAN_API_TOKEN,
     },
   },
 };
