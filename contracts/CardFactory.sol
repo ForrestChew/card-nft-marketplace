@@ -166,7 +166,7 @@ contract CardFactory is
             numOfNftsOwnedPerPack[packId][to] += 1;
             numOfNftsOwnedPerPack[packId][from] -= 1;
             rewardEligibilityMultiplier[from] -= 1;
-            removeEligibilityMultiplier(from);
+            _removeEligibilityMultiplier(from);
             super._transfer(from, to, tokenId);
         } else if (packId > 0) {
             numOfNftsOwnedPerPack[packId][to] += 1;
@@ -243,16 +243,38 @@ contract CardFactory is
 
     /// @notice Removes an instance of target address from eligible for rewards array
     /// @param addrToRemoveMultiplier Address to remove multiplier
-    function removeEligibilityMultiplier(address addrToRemoveMultiplier)
+    function _removeEligibilityMultiplier(address addrToRemoveMultiplier)
         private
     {
-        for (uint256 i = 0; i < addressesEligibleForRewards.length - 1; i++) {
-            if (addressesEligibleForRewards[i] == addrToRemoveMultiplier) {
-                addressesEligibleForRewards[i] = addressesEligibleForRewards[
-                    i + 1
-                ];
-                addressesEligibleForRewards.pop();
+        if (addressesEligibleForRewards.length == 1)
+            addressesEligibleForRewards.pop();
+        else {
+            for (
+                uint256 i = 0;
+                i < addressesEligibleForRewards.length - 1;
+                i++
+            ) {
+                if (addressesEligibleForRewards[i] == addrToRemoveMultiplier) {
+                    addressesEligibleForRewards[
+                        i
+                    ] = addressesEligibleForRewards[i + 1];
+                    addressesEligibleForRewards.pop();
+                }
             }
         }
+    }
+
+    /** @notice Returns an array of addresses eligible for reward 
+    as well as the number of addresses eligible for the reward.
+    */
+    function getEligibleRewardWinners()
+        public
+        view
+        returns (address[] memory, uint256)
+    {
+        return (
+            addressesEligibleForRewards,
+            addressesEligibleForRewards.length
+        );
     }
 }
