@@ -19,15 +19,12 @@ contract CardFactory is
 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    address constant VRF_COORDINATOR =
-        0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
-    VRFCoordinatorV2Interface COORDINATOR =
-        VRFCoordinatorV2Interface(VRF_COORDINATOR);
-    bytes32 constant KEY_HASH =
-        0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
-    uint32 constant CALL_BACK_GAS_LIMIT = 100000;
-    uint64 constant SUBSCRIPTION_ID = 206;
-    uint16 constant REQUEST_CONFIRMATIONS = 3;
+    address immutable VRF_COORDINATOR;
+    VRFCoordinatorV2Interface COORDINATOR;
+    bytes32 immutable KEY_HASH;
+    uint32 immutable CALL_BACK_GAS_LIMIT;
+    uint64 immutable SUBSCRIPTION_ID;
+    uint16 immutable REQUEST_CONFIRMATIONS;
     uint256 requestId;
     address public cardMarketplaceAddress;
     uint256[] public randomWords;
@@ -43,10 +40,25 @@ contract CardFactory is
     /// @notice Sets The NFT collection name and symbol on contract creation
     /// @param collectionName The name of the NFT collection
     /// @param collectionSymbol The symbol for the NFT collection
-    constructor(string memory collectionName, string memory collectionSymbol)
+    constructor(
+        string memory collectionName,
+        string memory collectionSymbol,
+        address _vrfCoordinator,
+        bytes32 _keyHash,
+        uint32 _callbackGasLimit,
+        uint64 _subscriptionId,
+        uint16 _requestConfirmations
+    )
         ERC721(collectionName, collectionSymbol)
-        VRFConsumerBaseV2(VRF_COORDINATOR)
-    {}
+        VRFConsumerBaseV2(_vrfCoordinator)
+    {
+        COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
+        VRF_COORDINATOR = _vrfCoordinator;
+        KEY_HASH = _keyHash;
+        CALL_BACK_GAS_LIMIT = _callbackGasLimit;
+        SUBSCRIPTION_ID = _subscriptionId;
+        REQUEST_CONFIRMATIONS = _requestConfirmations;
+    }
 
     /// @notice Sets the NFT marketplace address enabling default approval
     /// @param _marketplaceAddress The address of card NFT marketplace
@@ -95,7 +107,7 @@ contract CardFactory is
         _approve(approvedAddress, _tokenIds.current());
     }
 
-    /// @notice For admin use only. Creates an NFT with belonging to no pack
+    /// @notice For admin use only. Creates an NFT belonging to no pack
     /// @param tokenUri The URI string to be used for NFT
     /// @param rarity The rarity associated with the NFT. Rarities: Iron, Gold, Diamond
     /** @param approvedAddress The Address you would like to give rights
@@ -115,6 +127,26 @@ contract CardFactory is
         _approve(approvedAddress, _tokenIds.current());
     }
 
+    /// @notice For admin use only. Creates an NFT soley for a reward
+    /// @param tokenUri The URI string to be used for NFT
+    /// @param rarity The rarity associated with the NFT. Rarities: Iron, Gold, Diamond
+    /** @param approvedAddress The Address you would like to give rights
+    to transfer your NFT. Typically this would be the Marketplace
+    address used in tandem with this ERC721 contract. If you would 
+    not like to approve address. Use the Ethereum zero address --> address(0)
+    */
+    function createNFTWithApprovalAdminForReward(
+        string memory tokenUri,
+        string memory rarity,
+        address approvedAddress
+    ) public onlyOwner {
+        _tokenIds.increment();
+        nftRarity[_tokenIds.current()] = rarity;
+        _mint(address(this), _tokenIds.current());
+        _setTokenURI(_tokenIds.current(), tokenUri);
+        _approve(approvedAddress, _tokenIds.current());
+    }
+
     /** @notice Overrides parent function in order to keep track of how 
     many NFTs a given user has of each pack. Can also be used to transfer
     NFTs that have not been assigned a pack. This applies to all NFTs
@@ -129,11 +161,12 @@ contract CardFactory is
         uint256 tokenId
     ) public override nonReentrant {
         uint256 packId = nftIdToPackId[tokenId];
-        uint256 packAmount = numOfNftsOwnedPerPack[packId][msg.sender];
+        uint256 packAmount = numOfNftsOwnedPerPack[packId][from];
         if (packId > 0 && packAmount == 5) {
             numOfNftsOwnedPerPack[packId][to] += 1;
             numOfNftsOwnedPerPack[packId][from] -= 1;
-            rewardEligibilityMultiplier[msg.sender] -= 1;
+            rewardEligibilityMultiplier[from] -= 1;
+            removeEligibilityMultiplier(from);
             super._transfer(from, to, tokenId);
         } else if (packId > 0) {
             numOfNftsOwnedPerPack[packId][to] += 1;
@@ -156,6 +189,7 @@ contract CardFactory is
             "verifyCompletePackOwnerShip: Sorry, you do not have a complete set :("
         );
         rewardEligibilityMultiplier[msg.sender] += 1;
+        addressesEligibleForRewards.push(msg.sender);
     }
 
     /** @notice Only owner can call this function to distribute rewards amoungst
@@ -198,11 +232,27 @@ contract CardFactory is
         internal
         override
     {
-        for (uint256 i = 0; i < _randomWords.length; i++) {
-            _randomWords[i] =
+        randomWords = _randomWords;
+        for (uint256 i = 0; i < randomWords.length; i++) {
+            // Random words are in the range of 0 --> length of eligible addresses
+            randomWords[i] =
                 randomWords[i] %
                 addressesEligibleForRewards.length;
         }
-        randomWords = _randomWords;
+    }
+
+    /// @notice Removes an instance of target address from eligible for rewards array
+    /// @param addrToRemoveMultiplier Address to remove multiplier
+    function removeEligibilityMultiplier(address addrToRemoveMultiplier)
+        private
+    {
+        for (uint256 i = 0; i < addressesEligibleForRewards.length - 1; i++) {
+            if (addressesEligibleForRewards[i] == addrToRemoveMultiplier) {
+                addressesEligibleForRewards[i] = addressesEligibleForRewards[
+                    i + 1
+                ];
+                addressesEligibleForRewards.pop();
+            }
+        }
     }
 }
