@@ -19,7 +19,6 @@ contract CardFactory is
 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    address immutable VRF_COORDINATOR;
     VRFCoordinatorV2Interface COORDINATOR;
     bytes32 immutable KEY_HASH;
     uint32 immutable CALL_BACK_GAS_LIMIT;
@@ -53,7 +52,6 @@ contract CardFactory is
         VRFConsumerBaseV2(_vrfCoordinator)
     {
         COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
-        VRF_COORDINATOR = _vrfCoordinator;
         KEY_HASH = _keyHash;
         CALL_BACK_GAS_LIMIT = _callbackGasLimit;
         SUBSCRIPTION_ID = _subscriptionId;
