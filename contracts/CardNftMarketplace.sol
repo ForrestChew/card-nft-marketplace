@@ -85,7 +85,7 @@ contract CardNftMarketplace is Ownable {
             }
         }
         if (packIdExists) {
-            // Shifts elements to the left from _packId's index and pops off the last element
+            // Shifts elements to the right from _packId's index and pops off the last element
             for (
                 uint256 i = packListingIdx;
                 i < listingsSeller[msg.sender].length - 1;
