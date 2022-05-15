@@ -2,6 +2,12 @@ const { expect } = require('chai');
 const { ethers } = require('hardhat');
 
 const ONE_ETHER = ethers.utils.parseEther('1');
+const vrfCoordinator = '0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed';
+const keyHash =
+  '0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f';
+const callbackGasLimit = 100000;
+const subscriptionId = 1;
+const requestConfirmations = 3;
 
 describe('CardNftMarketplace', () => {
   let accountOne;
@@ -11,7 +17,15 @@ describe('CardNftMarketplace', () => {
     [accountOne, accountTwo] = await ethers.getSigners();
     // Deploy NFT factory in order to mint NFTs
     const CardFactory = await ethers.getContractFactory('CardFactory');
-    cardFactory = await CardFactory.deploy('CardTest', 'CRD');
+    cardFactory = await CardFactory.deploy(
+      'TestName',
+      'TSTSYM',
+      vrfCoordinator,
+      keyHash,
+      callbackGasLimit,
+      subscriptionId,
+      requestConfirmations
+    );
     await cardFactory.deployed();
     const CardNftMarketplace = await ethers.getContractFactory(
       'CardNftMarketplace'
