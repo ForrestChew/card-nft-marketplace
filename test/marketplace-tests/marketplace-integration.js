@@ -1,13 +1,16 @@
 const { expect } = require('chai');
 const { ethers, assert } = require('hardhat');
-const {
-  expectRevert, // Assertions for transactions that should fail
-} = require('@openzeppelin/test-helpers');
 
 const SAMPLE_NFT_URI =
   'https://gateway.pinata.cloud/ipfs/QmVo4Bv31zLRvFiAXL6Z8te1kmuu1gYNEnneyBb2FF2aNp';
 const ONE_ETHER = ethers.utils.parseEther('1');
 const ONE_ETHER_PLUS_TAX = ethers.utils.parseEther('1.05');
+const vrfCoordinator = '0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed';
+const keyHash =
+  '0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f';
+const callbackGasLimit = 100000;
+const subscriptionId = 1;
+const requestConfirmations = 3;
 
 describe('CardNftMarketplace', () => {
   let accountOne;
@@ -17,7 +20,15 @@ describe('CardNftMarketplace', () => {
   before(async () => {
     [accountOne, accountTwo] = await ethers.getSigners();
     const CardFactory = await ethers.getContractFactory('CardFactory');
-    cardFactory = await CardFactory.deploy('Card', 'CRD');
+    cardFactory = await CardFactory.deploy(
+      'TestName',
+      'TSTSYM',
+      vrfCoordinator,
+      keyHash,
+      callbackGasLimit,
+      subscriptionId,
+      requestConfirmations
+    );
     await cardFactory.deployed();
     const CardNftMarketplace = await ethers.getContractFactory(
       'CardNftMarketplace'
