@@ -50,6 +50,7 @@ describe('CardNftMarketplace', () => {
   });
   describe('listPack function', () => {
     it('Should emit NewPackListing event', async () => {
+      expect(await cardFactory.ownerOf(1)).to.equal(accountOne.address);
       await expect(cardMarketplace.listPack(ONE_ETHER, [1, 2, 3]))
         .to.emit(cardMarketplace, 'NewPackListing')
         .withArgs(1, ONE_ETHER, accountOne.address, [1, 2, 3]);
