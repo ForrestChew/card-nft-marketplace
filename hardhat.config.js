@@ -17,6 +17,12 @@ module.exports = {
     },
   },
   networks: {
+    hardhat: {
+      forking: {
+        url: mumbaiUrl,
+        blockNumber: 26342800,
+      },
+    },
     mumbai: {
       url: mumbaiUrl,
       accounts: [mumabaiAccount],
