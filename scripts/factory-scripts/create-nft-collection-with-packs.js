@@ -1,5 +1,4 @@
 const { getCardFactoryInstance, marketplaceAddress } = require('../utils.js');
-
 const IRON_URI =
   'https://gateway.pinata.cloud/ipfs/QmVo4Bv31zLRvFiAXL6Z8te1kmuu1gYNEnneyBb2FF2aNp';
 const GOLD_URI =
@@ -22,11 +21,26 @@ const nftMetaData = [
   DIAMOND_URI,
 ];
 
-const mintCollectionWithPacksAdmin = async () => {
+const mint = async (
+  tokenUri,
+  nftRarity,
+  packId,
+  CARD_MARKETPLACE_ADDR,
+  cardFactory
+) => {
+  await cardFactory.createNFTWithApprovalAdminPack(
+    tokenUri,
+    nftRarity,
+    packId,
+    CARD_MARKETPLACE_ADDR
+  );
+};
+
+const mintCollectionWithPacksAdmin = async (amountOfPacks) => {
   const cardFactory = await getCardFactoryInstance();
   const nftRarityAmounts = { Iron: 0, Gold: 0, Diamond: 0 };
-  // Will mint 1000 total NFTs. 200 * 5 = 1000
-  for (let packId = 1; packId <= 200; packId++) {
+  // Will mint x total NFTs. amountOfPacks * 5 = x
+  for (let packId = 1; packId <= amountOfPacks; packId++) {
     for (let nftId = 1; nftId <= 5; nftId++) {
       let tokenUri = randomTokenUri();
       let nftRarity;
@@ -46,6 +60,8 @@ const mintCollectionWithPacksAdmin = async () => {
       console.log('Diamond amount:', nftRarityAmounts['Diamond']);
     }
   }
+  console.log('-'.padEnd(42, '-'));
+  console.log('TOTAL:');
   console.log('Iron amount:', nftRarityAmounts['Iron']);
   console.log('Gold amount:', nftRarityAmounts['Gold']);
   console.log('Diamond amount:', nftRarityAmounts['Diamond']);
@@ -58,22 +74,7 @@ const randomTokenUri = () => {
   return nftMetaData[randInt];
 };
 
-const mint = async (
-  tokenUri,
-  nftRarity,
-  packId,
-  CARD_MARKETPLACE_ADDR,
-  cardFactory
-) => {
-  await cardFactory.createNFTWithApprovalAdminPack(
-    tokenUri,
-    nftRarity,
-    packId,
-    CARD_MARKETPLACE_ADDR
-  );
-};
-
-mintCollectionWithPacksAdmin()
+mintCollectionWithPacksAdmin(6)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
