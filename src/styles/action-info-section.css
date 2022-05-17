@@ -1,0 +1,59 @@
+.info-section-container {
+  display: flex;
+  border: 1px solid black;
+}
+
+.pack-info {
+  margin-left: 2rem;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.pack-imgs {
+  margin-top: 2rem;
+  position: relative;
+  aspect-ratio: 16/9;
+}
+
+.slide-img {
+  aspect-ratio: 3/2;
+  position: absolute;
+  margin: 0 auto 0 auto;
+  left: 0;
+  right: 0;
+  inset: 0;
+  border: 1px solid gray;
+  user-select: none;
+}
+
+.prev-img {
+  z-index: 1;
+  position: absolute;
+  border: none;
+  font-size: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 1rem;
+  max-width: 100%;
+  background: none;
+}
+
+.next-img {
+  z-index: 1;
+  position: absolute;
+  border: none;
+  font-size: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 1rem;
+  background: none;
+}
+
+.next-img:hover {
+  color: whitesmoke;
+  cursor: pointer;
+}
+
+.prev-img:hover {
+  color: whitesmoke;
+  cursor: pointer;
+}
