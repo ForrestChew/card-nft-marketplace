@@ -28,7 +28,6 @@ contract CardFactory is
     address public cardMarketplaceAddress;
     uint256[] public randomWords;
     address[] public addressesEligibleForRewards;
-    mapping(address => uint256) public rewardEligibilityMultiplier;
     mapping(uint256 => string) public nftRarity;
     // NFT's Id --> pack Id to which it belongs
     mapping(uint256 => uint256) public nftIdToPackId;
@@ -163,9 +162,8 @@ contract CardFactory is
         if (packId > 0 && packAmount == 5) {
             numOfNftsOwnedPerPack[packId][to] += 1;
             numOfNftsOwnedPerPack[packId][from] -= 1;
-            rewardEligibilityMultiplier[from] -= 1;
-            _removeEligibilityMultiplier(from);
             super._transfer(from, to, tokenId);
+            _removeEligibilityMultiplier(from);
         } else if (packId > 0) {
             numOfNftsOwnedPerPack[packId][to] += 1;
             numOfNftsOwnedPerPack[packId][from] -= 1;
@@ -186,7 +184,7 @@ contract CardFactory is
             packAmount == 5,
             "verifyCompletePackOwnerShip: Sorry, you do not have a complete set :("
         );
-        rewardEligibilityMultiplier[msg.sender] += 1;
+        // rewardEligibilityMultiplier[msg.sender] += 1;
         addressesEligibleForRewards.push(msg.sender);
     }
 
@@ -244,9 +242,10 @@ contract CardFactory is
     function _removeEligibilityMultiplier(address addrToRemoveMultiplier)
         private
     {
+        // Pops off address from element shift to reduce reward multiplier
         if (addressesEligibleForRewards.length == 1)
             addressesEligibleForRewards.pop();
-        else {
+        else if (addressesEligibleForRewards.length > 1) {
             for (
                 uint256 i = 0;
                 i < addressesEligibleForRewards.length - 1;
@@ -259,7 +258,7 @@ contract CardFactory is
                     addressesEligibleForRewards.pop();
                 }
             }
-        }
+        } 
     }
 
     /** @notice Returns an array of addresses eligible for reward 
