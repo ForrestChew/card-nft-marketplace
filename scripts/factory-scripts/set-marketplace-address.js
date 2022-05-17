@@ -2,7 +2,7 @@ const { getCardFactoryInstance, marketplaceAddress } = require('../utils.js');
 
 const setMarketplaceAddress = async () => {
   const cardFactory = await getCardFactoryInstance();
-  cardFactory.setMarketplaceAddress(marketplaceAddress);
+  await cardFactory.setMarketplaceAddress(marketplaceAddress);
   console.log('Marketplace address set in factory to:', marketplaceAddress);
 };
 
