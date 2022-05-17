@@ -28,7 +28,7 @@ const NavigationBar = () => {
           }
           to='/leader-board'
         >
-          Leader Board
+          Leaderboard
         </NavLink>
         <NavLink
           className={(navData) =>
