@@ -48,7 +48,7 @@ contract CardNftMarketplace is Ownable {
         nftCardFactory = _nftCardsAddr;
     }
 
-    /// @notice List 1 - k amount of NFTs together as a pack to be sold
+    /// @notice List 1 - 5 amount of NFTs together as a pack to be sold
     /// @param _packPrice the price the function caller would like to sell the pack for
     /// @param _nftIds the ID's of the NFT(s) the function caller would like to bundle in pack to sell
     /// @dev The marketplace will take ownership of the NFTs until the pack is either sold, or delisted
@@ -69,7 +69,6 @@ contract CardNftMarketplace is Ownable {
                 nftIds: _nftIds
             })
         );
-        // packListingIds.push(packListingId);
         emit NewPackListing(packListingId, _packPrice, msg.sender, _nftIds);
     }
 
