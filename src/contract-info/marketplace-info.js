@@ -1,18 +1,10 @@
-exports.marketplaceAddress = '0xdcb242588414BEAaD781232b3AF0EB967e4F771F';
+exports.marketplaceAddress = '0xc780B71de5cFa4df529534A0409dD03dC9F6cC2b';
 
 exports.marketplaceAbi = [
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: '_marketplaceOwner',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_nftCardsAddr',
-        type: 'address',
-      },
+      { internalType: 'address', name: '_marketplaceOwner', type: 'address' },
+      { internalType: 'address', name: '_nftCardsAddr', type: 'address' },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -107,16 +99,8 @@ exports.marketplaceAbi = [
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: '_packId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'address',
-        name: '_listingSeller',
-        type: 'address',
-      },
+      { internalType: 'uint256', name: '_packId', type: 'uint256' },
+      { internalType: 'address', name: '_listingSeller', type: 'address' },
     ],
     name: 'buyNftPack',
     outputs: [],
@@ -124,13 +108,7 @@ exports.marketplaceAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_packId',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: '_packId', type: 'uint256' }],
     name: 'delistPack',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -138,36 +116,16 @@ exports.marketplaceAbi = [
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: '_listingSeller',
-        type: 'address',
-      },
+      { internalType: 'address', name: '_listingSeller', type: 'address' },
     ],
     name: 'getListingsByAddress',
     outputs: [
       {
         components: [
-          {
-            internalType: 'uint256',
-            name: 'packListingId',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'packPrice',
-            type: 'uint256',
-          },
-          {
-            internalType: 'address',
-            name: 'packSeller',
-            type: 'address',
-          },
-          {
-            internalType: 'uint256[]',
-            name: 'nftIds',
-            type: 'uint256[]',
-          },
+          { internalType: 'uint256', name: 'packListingId', type: 'uint256' },
+          { internalType: 'uint256', name: 'packPrice', type: 'uint256' },
+          { internalType: 'address', name: 'packSeller', type: 'address' },
+          { internalType: 'uint256[]', name: 'nftIds', type: 'uint256[]' },
         ],
         internalType: 'struct CardNftMarketplace.PackListing[]',
         name: '',
@@ -179,16 +137,8 @@ exports.marketplaceAbi = [
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: '_packPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256[]',
-        name: '_nftIds',
-        type: 'uint256[]',
-      },
+      { internalType: 'uint256', name: '_packPrice', type: 'uint256' },
+      { internalType: 'uint256[]', name: '_nftIds', type: 'uint256[]' },
     ],
     name: 'listPack',
     outputs: [],
@@ -197,34 +147,14 @@ exports.marketplaceAbi = [
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: '', type: 'address' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
     ],
     name: 'listingsSeller',
     outputs: [
-      {
-        internalType: 'uint256',
-        name: 'packListingId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'packPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'address',
-        name: 'packSeller',
-        type: 'address',
-      },
+      { internalType: 'uint256', name: 'packListingId', type: 'uint256' },
+      { internalType: 'uint256', name: 'packPrice', type: 'uint256' },
+      { internalType: 'address', name: 'packSeller', type: 'address' },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -232,52 +162,28 @@ exports.marketplaceAbi = [
   {
     inputs: [],
     name: 'marketplaceOwner',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'nftCardFactory',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'owner',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'packListingCount',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '_value',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '_value', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -289,13 +195,7 @@ exports.marketplaceAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }],
     name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',

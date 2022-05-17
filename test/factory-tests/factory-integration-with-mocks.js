@@ -54,9 +54,6 @@ describe('Card Nft factory integration with mocks', () => {
   it('Account with complete NFT pack can verify their address for rewards', async () => {
     const packId = 1;
     await cardFactory.connect(accountTwo).verifyCompletePackOwnerShip(packId);
-    expect(
-      await cardFactory.rewardEligibilityMultiplier(accountTwo.address)
-    ).to.equal(1);
     expect(await cardFactory.addressesEligibleForRewards(0)).to.equal(
       accountTwo.address
     );
