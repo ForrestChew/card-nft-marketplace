@@ -28,10 +28,10 @@
     "ethereum-waffle": "^3.4.4",
     "hardhat": "^2.9.3",
     "hardhat-gas-reporter": "^1.0.8",
-    "web3": "^1.7.3"
+    "react-app-rewired": "^2.2.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-app-rewired start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
