@@ -8,7 +8,7 @@ const mumbaiUrl = process.env.MUMBAI_URL;
 
 module.exports = {
   solidity: {
-    version: '0.8.13',
+    version: '0.8.14',
     settings: {
       optimizer: {
         enabled: true,
@@ -29,8 +29,6 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: {
-      polygonMumbai: process.env.POLYGONSCAN_API_TOKEN,
-    },
+    apiKey: process.env.POLYGONSCAN_API_TOKEN,
   },
 };
