@@ -7,7 +7,7 @@ import About from './About';
 import Marketplace from './Marketplace';
 import LeaderBoard from './LeaderBoard';
 import Profile from './Profile';
-import '../styles/app.css';
+import '../styles/main.css';
 
 const App = () => {
   const [userAddress, setUserAddress] = useState('');
@@ -15,22 +15,21 @@ const App = () => {
   useEffect(() => {
     if (isAuthenticated) {
       setUserAddress(user.get('ethAddress'));
-      console.log(user.get('ethAddress'));
     }
   });
 
   return (
     <>
-      <div className='navbar-container'>
+      <div className="navbar-container">
         <NavigationBar />
         <ConnectButton />
       </div>
       <Routes>
-        <Route path='/' element={<About />} />
-        <Route path='/marketplace' element={<Marketplace />} />
-        <Route path='/leader-board' element={<LeaderBoard />} />
+        <Route path="/" element={<About />} />
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/leader-board" element={<LeaderBoard />} />
         <Route
-          path='/profile'
+          path="/profile"
           element={<Profile userAddress={userAddress} />}
         />
       </Routes>
