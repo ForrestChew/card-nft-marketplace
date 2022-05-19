@@ -2,18 +2,15 @@
 This script requires user to have deployed NFTs with the NFT card factory
 */
 const { ethers } = require('hardhat');
-const { getCardMarketplaceInstance, marketplaceOwner } = require('../utils.js');
+const { getCardMarketplaceInstance } = require('../utils.js');
 
 const ONE_ETHER = ethers.utils.parseEther('1');
 
-const listPack = async () => {
+const listPack = async (tokenIdsToMint) => {
   const cardMarketplace = await getCardMarketplaceInstance();
   const listPackReceipt = await cardMarketplace.listPack(
     ONE_ETHER,
-    [1, 2, 3, 4, 5],
-    {
-      gasLimit: 10000000,
-    }
+    tokenIdsToMint
   );
   console.log('-'.padEnd(42, '-'));
   console.log(listPackReceipt);
@@ -21,7 +18,7 @@ const listPack = async () => {
   console.log('Pack Minted');
 };
 
-listPack()
+listPack([27, 28, 29, 30])
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
