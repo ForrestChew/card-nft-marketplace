@@ -84,11 +84,11 @@ describe('CardNftMarketplace', () => {
     it('Should emit ListingSold event', async () => {
       await expect(
         cardMarketplace.connect(accountTwo).buyNftPack(1, accountOne.address, {
-          value: ONE_ETHER_PLUS_TAX,
+          value: ONE_ETHER,
         })
       )
         .to.emit(cardMarketplace, 'ListingSold')
-        .withArgs(accountOne.address, accountTwo.address, ONE_ETHER_PLUS_TAX);
+        .withArgs(accountOne.address, accountTwo.address, ONE_ETHER);
     });
     it('accountTwo (the pack buyer) should have control of NFTs in pack listing', async () => {
       for (let i = 1; i <= 3; i++) {
