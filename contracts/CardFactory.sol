@@ -28,6 +28,7 @@ contract CardFactory is
     address public cardMarketplaceAddress;
     uint256[] public randomWords;
     address[] public addressesEligibleForRewards;
+    // NFT rarity is not defined in the JSON schema as the rarity may change
     mapping(uint256 => string) public nftRarity;
     // NFT's Id --> pack Id to which it belongs
     mapping(uint256 => uint256) public nftIdToPackId;
