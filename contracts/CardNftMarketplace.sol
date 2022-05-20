@@ -114,8 +114,7 @@ contract CardNftMarketplace is Ownable {
                     .packPrice * 500) / 10000);
                 require(
                     msg.value ==
-                        listingsSeller[_listingSeller][i].packPrice +
-                            threePercentTax,
+                        listingsSeller[_listingSeller][i].packPrice,
                     "buyNftPack: Wrong amount"
                 );
                 // Loops through pack listing NFT id array, and tranfers them to pack buyer
@@ -135,7 +134,7 @@ contract CardNftMarketplace is Ownable {
                 );
                 require(txFee, "txFee: Tx failed");
                 (bool txSeller, ) = _listingSeller.call{
-                    value: listingsSeller[_listingSeller][i].packPrice
+                    value: listingsSeller[_listingSeller][i].packPrice - threePercentTax
                 }("");
                 require(txSeller, "sellerTx: Tx failed");
                 delete listingsSeller[_listingSeller];
