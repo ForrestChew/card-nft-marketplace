@@ -1,18 +1,16 @@
-.nfts-container-profile {
-  margin: 2rem 4rem 2rem 4rem;
-}
-
 .btn-global {
   padding: 0.1rem 1.25rem 0.1rem 1.25rem;
-  margin: 0 0 0.5 0;
   font-family: 'Open Sans', sans-serif;
   color: whitesmoke;
   background-color: crimson;
   border: 1px solid black;
+  border-radius: 0.45rem;
 }
 
 .btn-global:hover {
   cursor: pointer;
+  color: black;
+  background-color: whitesmoke;
 }
 
 .is-loading {

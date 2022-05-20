@@ -1,9 +1,18 @@
+.action-info-section {
+  border: 1px solid black;
+  margin-right: 5rem;
+  position: static;
+}
+
 .info-section-container {
   display: flex;
+  width: 60vh;
   border: 1px solid black;
 }
 
 .pack-info {
+  display: flex;
+  flex-direction: column;
   margin-left: 2rem;
   font-family: 'Open Sans', sans-serif;
 }
@@ -49,11 +58,11 @@
 }
 
 .next-img:hover {
-  color: whitesmoke;
+  color: gray;
   cursor: pointer;
 }
 
 .prev-img:hover {
-  color: whitesmoke;
+  color: gray;
   cursor: pointer;
 }

@@ -1,7 +1,5 @@
 .marketplace-components {
   display: flex;
-  padding: 0 3rem 0 3rem;
-  border: 1px solid white;
   margin-top: 3rem;
 }
 
@@ -10,7 +8,7 @@
   justify-content: start;
   flex-wrap: wrap;
   width: max-content;
-  border: 1px solid black;
+  margin-left: 2.5rem;
 }
 
 .nft-pack-container {
@@ -18,26 +16,33 @@
   width: 256px;
   margin: 0.5rem 0.5rem 0.5rem 0.5rem;
   border-radius: 1.8rem 1.8rem 1.8rem 1.8rem;
-  border: 2px solid black;
   font-family: 'Open Sans', sans-serif;
+  background-color: gray;
 }
 
 .nft-pack-img {
   border-radius: 1.6rem 1.6rem 0 0;
 }
 
-.nft-title-info {
-  text-align: center;
-  padding: 8px 8px;
-}
-
-.action-info-section {
-  border: 1px solid black;
-  flex-basis: 40%;
-  margin-left: 5rem;
-}
-
-.nfts-in-pack {
+.below-img {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: column;
+}
+.nft-title-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  word-wrap: break-word;
+  margin-bottom: 0.5rem;
+}
+
+.info-text {
+  font-family: 'Open Sans', sans-serif;
+  color: whitesmoke;
+}
+
+.pack-btn {
+  display: flex;
+  justify-content: center;
 }
