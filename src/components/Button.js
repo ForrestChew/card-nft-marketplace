@@ -1,7 +1,11 @@
 import '../styles/main.css';
 
-const Button = ({ btnName }) => {
-  return <button className="btn-global">{btnName}</button>;
+const Button = ({ btnName, onClick }) => {
+  return (
+    <button className="btn-global" onClick={() => onClick()}>
+      {btnName}
+    </button>
+  );
 };
 
 export default Button;
