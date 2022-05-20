@@ -1,7 +1,28 @@
+import { useContext, useEffect } from 'react';
+import { AppContext } from './Context';
 import Button from './Button';
-import '../styles/cards.css';
+import '../styles/marketplace.css';
 
-const Card = ({ packImg, nftPackListingId, packPrice, nftCount }) => {
+const Card = ({
+  packImg,
+  packPrice,
+  packListingId,
+  nftCount,
+  packSeller,
+  nftIds,
+}) => {
+  const [activePack, setActivePack] = useContext(AppContext);
+  const displayActivePack = () => {
+    setActivePack({
+      packImg,
+      packPrice,
+      packListingId,
+      nftCount,
+      packSeller,
+      nftIds,
+    });
+  };
+
   return (
     <>
       <div className="nft-pack-container">
@@ -11,14 +32,24 @@ const Card = ({ packImg, nftPackListingId, packPrice, nftCount }) => {
           height="210"
           width="256"
         ></img>
-        <div className="nft-title-info">
-          <p>Dipshits</p>
-          <p>Item Count:</p>
-          <p>Price: {packPrice} </p>
-          <p>Id: {nftPackListingId}</p>
-        </div>
-        <div className="pack-btn">
-          <Button btnName="Buy" />
+        <div className="below-img">
+          <div className="nft-title-info">
+            <span className="info-text">Name</span>
+            <span className="info-text">Count: {nftCount}</span>
+            <span className="info-text">Price: {packPrice}</span>
+          </div>
+          <div className="pack-btn">
+            <Button
+              btnName="Details"
+              packImg={packImg}
+              packPrice={packPrice}
+              packListingId={packListingId}
+              nftCount={nftCount}
+              packSeller={packSeller}
+              nftIds={nftIds}
+              onClick={() => displayActivePack()}
+            />
+          </div>
         </div>
       </div>
     </>
