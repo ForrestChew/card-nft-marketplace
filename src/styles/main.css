@@ -3,8 +3,8 @@
   font-family: 'Open Sans', sans-serif;
   color: whitesmoke;
   background-color: crimson;
-  border: 1px solid black;
-  border-radius: 0.45rem;
+  border: 1px solid white;
+  border-radius: 1rem;
 }
 
 .btn-global:hover {

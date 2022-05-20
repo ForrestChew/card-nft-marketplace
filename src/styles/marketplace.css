@@ -3,6 +3,17 @@
   margin-top: 3rem;
 }
 
+.action-info-section {
+  position: sticky;
+  top: 6rem;
+  border: 1px solid black;
+  margin-right: 5rem;
+  height: 50%;
+  box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
+  background-color: #72777d;
+  border-radius: 1rem 1rem 1rem 1rem;
+}
+
 .nft-packs-container {
   display: flex;
   justify-content: start;
@@ -15,14 +26,18 @@
   height: 304px;
   width: 256px;
   margin: 0.5rem 0.5rem 0.5rem 0.5rem;
-  border-radius: 1.8rem 1.8rem 1.8rem 1.8rem;
+  border-radius: 1rem 1rem 1rem 1rem;
   font-family: 'Open Sans', sans-serif;
   box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
   background-color: #72777d;
 }
 
+.nft-pack-container:hover {
+  box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem #2a4b8d;
+}
+
 .nft-pack-img {
-  border-radius: 1.6rem 1.6rem 0 0;
+  border-radius: 1rem 1rem 0 0;
 }
 
 .below-img {
@@ -30,6 +45,7 @@
   justify-content: center;
   flex-direction: column;
 }
+
 .nft-title-info {
   display: flex;
   flex-direction: column;

@@ -1,68 +1,85 @@
-.action-info-section {
-  border: 1px solid black;
-  margin-right: 5rem;
-  position: static;
+.no-pack-selected {
+  top: 6;
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #72777d;
+  border-radius: 1rem 1rem 1rem 1rem;
+  width: 60vh;
+  max-height: fit-content;
+  font-family: 'Open Sans', sans-serif;
+  color: white;
 }
 
 .info-section-container {
-  display: flex;
   width: 60vh;
-  border: 1px solid black;
 }
 
 .pack-info {
   display: flex;
   flex-direction: column;
-  margin-left: 2rem;
+  align-items: center;
+  margin: 1rem 0rem 1rem 0rem;
+  color: white;
+  font-size: larger;
   font-family: 'Open Sans', sans-serif;
 }
 
-.pack-imgs {
-  margin-top: 2rem;
-  position: relative;
-  aspect-ratio: 16/9;
-}
-
-.slide-img {
-  aspect-ratio: 3/2;
-  position: absolute;
-  margin: 0 auto 0 auto;
-  left: 0;
-  right: 0;
-  inset: 0;
-  border: 1px solid gray;
+.carousel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid black;
+  width: 100%;
+  height: auto;
   user-select: none;
 }
 
-.prev-img {
-  z-index: 1;
-  position: absolute;
-  border: none;
+.arrows {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   font-size: 3rem;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 1rem;
-  max-width: 100%;
-  background: none;
+  color: white;
 }
 
-.next-img {
-  z-index: 1;
-  position: absolute;
-  border: none;
-  font-size: 3rem;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 1rem;
-  background: none;
-}
-
-.next-img:hover {
-  color: gray;
+.arrows:hover {
   cursor: pointer;
 }
 
-.prev-img:hover {
-  color: gray;
+.prev-arrow:hover {
+  color: black;
+}
+
+.next-arrow:hover {
+  color: black;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+}
+
+.buy-btn {
+  padding: 0.5rem 1.25rem 0.5rem 1.25rem;
+  margin: 2rem 0rem 2rem 0rem;
+  font-family: 'Open Sans', sans-serif;
+  color: whitesmoke;
+  background-color: crimson;
+  border: 1px solid white;
+  border-radius: 1rem;
+}
+
+.buy-btn:hover {
+  color: black;
+  background-color: whitesmoke;
   cursor: pointer;
+}
+
+.nft-info {
+  margin-bottom: 1rem;
+  font-size: larger;
+  color: white;
 }

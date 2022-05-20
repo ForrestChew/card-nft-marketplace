@@ -1,0 +1,9 @@
+.list-pack-container {
+  display: flex;
+  justify-content: center;
+  margin: 0rem 15rem 0rem 15rem;
+  border: 1px solid black;
+}
+
+.list-pack {
+}
