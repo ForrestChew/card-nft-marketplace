@@ -4,12 +4,12 @@ import '../styles/navigation-bar.css';
 const NavigationBar = () => {
   return (
     <>
-      <nav className='navbar-items-container'>
+      <nav className="navbar-items-container">
         <NavLink
           className={(navData) =>
             navData.isActive ? 'list-item-active' : 'list-item'
           }
-          to='/'
+          to="/"
           end
         >
           About
@@ -18,7 +18,7 @@ const NavigationBar = () => {
           className={(navData) =>
             navData.isActive ? 'list-item-active' : 'list-item'
           }
-          to='/marketplace'
+          to="/marketplace"
         >
           Marketplace
         </NavLink>
@@ -26,7 +26,15 @@ const NavigationBar = () => {
           className={(navData) =>
             navData.isActive ? 'list-item-active' : 'list-item'
           }
-          to='/leader-board'
+          to="/list-pack"
+        >
+          List Pack
+        </NavLink>
+        <NavLink
+          className={(navData) =>
+            navData.isActive ? 'list-item-active' : 'list-item'
+          }
+          to="/leader-board"
         >
           Leaderboard
         </NavLink>
@@ -34,7 +42,7 @@ const NavigationBar = () => {
           className={(navData) =>
             navData.isActive ? 'list-item-active' : 'list-item'
           }
-          to='/profile'
+          to="/profile"
         >
           Profile
         </NavLink>
