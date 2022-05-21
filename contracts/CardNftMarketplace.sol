@@ -9,7 +9,8 @@ import "hardhat/console.sol";
 /// @title An NFT marketplace for NFTs created from designated ERC721 smart contract.
 /// @author https://twitter.com/BossMcBara
 /// @notice To be used in tandem with a certain ERC721 marketplace
-/// @dev Anytime the word "pack" is used, it's to describe a pack of NFTs
+/// @dev Anytime the word "pack" is used, it's to describe a pack of NFTs.
+/// @dev WARNING: Most write functions are incredibly gas intensive and therefor expensive.
 contract CardNftMarketplace is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter public packListingCount;
@@ -137,7 +138,7 @@ contract CardNftMarketplace is Ownable {
                     value: listingsSeller[_listingSeller][i].packPrice - threePercentTax
                 }("");
                 require(txSeller, "sellerTx: Tx failed");
-                delete listingsSeller[_listingSeller];
+                delete listingsSeller[_listingSeller][i];
                 emit ListingSold(_listingSeller, msg.sender, msg.value);
             } else {
                 revert("buyNftPack: Pack does not exist");
