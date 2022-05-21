@@ -1,7 +1,11 @@
 import React from 'react';
 
 const NoPackSelected = () => {
-  return <div>NoPackSelected</div>;
+  return (
+    <div className="no-pack-selected">
+      <h1>No Pack Currently selected</h1>
+    </div>
+  );
 };
 
 export default NoPackSelected;
