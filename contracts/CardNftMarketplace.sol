@@ -10,7 +10,7 @@ import "hardhat/console.sol";
 /// @author https://twitter.com/BossMcBara
 /// @notice To be used in tandem with a certain ERC721 marketplace
 /// @dev Anytime the word "pack" is used, it's to describe a pack of NFTs.
-/// @dev WARNING: Most write functions are incredibly gas intensive and therefor expensive.
+/// @dev WARNING: Most write functions are incredibly gas intensive and therefore expensive.
 contract CardNftMarketplace is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter public packListingCount;
@@ -22,8 +22,11 @@ contract CardNftMarketplace is Ownable {
         address packSeller;
         uint256[] nftIds;
     }
+
     mapping(address => PackListing[]) public listingsSeller;
+
     event NewPackListing(
+        string name,
         uint256 packListingId,
         uint256 packPrice,
         address packSeller,
@@ -52,8 +55,13 @@ contract CardNftMarketplace is Ownable {
     /// @notice List 1 - 5 amount of NFTs together as a pack to be sold
     /// @param _packPrice the price the function caller would like to sell the pack for
     /// @param _nftIds the ID's of the NFT(s) the function caller would like to bundle in pack to sell
+    /// @param _packName User given name
     /// @dev The marketplace will take ownership of the NFTs until the pack is either sold, or delisted
-    function listPack(uint256 _packPrice, uint256[] memory _nftIds) public {
+    function listPack(
+        uint256 _packPrice,
+        uint256[] memory _nftIds,
+        string memory _packName
+    ) public {
         for (uint256 i = 0; i < _nftIds.length; i++) {
             IERC721(nftCardFactory).transferFrom(
                 msg.sender,
@@ -70,7 +78,13 @@ contract CardNftMarketplace is Ownable {
                 nftIds: _nftIds
             })
         );
-        emit NewPackListing(packListingId, _packPrice, msg.sender, _nftIds);
+        emit NewPackListing(
+            _packName,
+            packListingId,
+            _packPrice,
+            msg.sender,
+            _nftIds
+        );
     }
 
     /// @notice Delists an owned NFT pack listing
@@ -78,10 +92,22 @@ contract CardNftMarketplace is Ownable {
     function delistPack(uint256 _packId) public {
         uint256 packListingIdx;
         bool packIdExists;
+        // Transfers NFTs in pack back into the listers wallet
         for (uint256 i = 0; i < listingsSeller[msg.sender].length; i++) {
             if (listingsSeller[msg.sender][i].packListingId == _packId) {
                 packListingIdx = i;
                 packIdExists = true;
+                for (
+                    uint256 j = 0;
+                    j < listingsSeller[msg.sender][i].nftIds.length;
+                    j++
+                ) {
+                    IERC721(nftCardFactory).transferFrom(
+                        address(this),
+                        msg.sender,
+                        listingsSeller[msg.sender][i].nftIds[j]
+                    );
+                }
             }
         }
         if (packIdExists) {
@@ -114,8 +140,7 @@ contract CardNftMarketplace is Ownable {
                 uint256 threePercentTax = ((listingsSeller[_listingSeller][i]
                     .packPrice * 500) / 10000);
                 require(
-                    msg.value ==
-                        listingsSeller[_listingSeller][i].packPrice,
+                    msg.value == listingsSeller[_listingSeller][i].packPrice,
                     "buyNftPack: Wrong amount"
                 );
                 // Loops through pack listing NFT id array, and tranfers them to pack buyer
@@ -135,7 +160,8 @@ contract CardNftMarketplace is Ownable {
                 );
                 require(txFee, "txFee: Tx failed");
                 (bool txSeller, ) = _listingSeller.call{
-                    value: listingsSeller[_listingSeller][i].packPrice - threePercentTax
+                    value: listingsSeller[_listingSeller][i].packPrice -
+                        threePercentTax
                 }("");
                 require(txSeller, "sellerTx: Tx failed");
                 delete listingsSeller[_listingSeller][i];
