@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useMoralisFile, useMoralis } from 'react-moralis';
+import {  useState } from 'react';
+import {  useMoralis } from 'react-moralis';
 import Card from './Card';
 import {
   marketplaceAddress,
@@ -10,29 +10,33 @@ import '../styles/main.css';
 
 const ListPack = () => {
   const [fileTarget, setFileTarget] = useState('');
-  const [nftIds, setNftIds] = useState([]);
   const [packName, setPackName] = useState('');
   const [nftIdsForCard, setNftIdsForCard] = useState(0);
   const [packPriceGlobal, setPackPriceGloabl] = useState(0);
 
   const { Moralis } = useMoralis();
 
-  const uploadFile = async (e) => {
+  const uploadImage = async (e) => {
     e.preventDefault();
-    const name = 'PackImg.jpg';
-    const file = fileTarget;
-    const moralisFile = new Moralis.File(name, file);
-    await moralisFile
-      .save()
-      .then(() => {
+    const name = 'PackImg.png';
+    const packImage = new Moralis.File(name, { base64: fileTarget });
+    const PackListings = Moralis.Object.extend('NewPackListings');
+    const query = new Moralis.Query(PackListings);
+    query.equalTo('name', packName);
+    const queryFound = await query.find();
+    const listingToUpdate = queryFound[0]; 
+    listingToUpdate.set('packImage', packImage);
+    await listingToUpdate.save().then(
+      () => {
         console.log('Success');
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   };
 
-  const listPackToSmartContract = async () => {
+  const listPackToSmartContract = async (packPrice, nftIds) => {
     const provider = Moralis.web3;
     const ethers = Moralis.web3Library;
     const signer = provider.getSigner();
@@ -41,20 +45,24 @@ const ListPack = () => {
       marketplaceAbi,
       signer
     );
-    await cardMarketplace.listPack(Moralis.Units.ETH(packPriceGlobal), nftIds);
+    await cardMarketplace.listPack(
+      Moralis.Units.ETH(packPrice),
+      nftIds,
+      packName,
+      { gasLimit: 1000000 }
+    );
   };
 
   const getInputInfoAndCallContract = (e) => {
     e.preventDefault();
     const nftIdsInput = document.getElementsByName('nftIdsArr');
     const packPrice = document.getElementsByName('packPrice');
-    for (let i = 0; i < nftIdsInput.length; i++) {
-      const packPriceVal = packPrice[i].value;
-      const inputNftIdArr = nftIdsInput[i].value.split(' ');
-      setNftIds(inputNftIdArr);
-      setPackPriceGloabl(packPriceVal);
-    }
-    listPackToSmartContract();
+    const packPriceVal = packPrice[0].value;
+    // Splits into array since this value will be an argument for the marketplace
+    // smart contract that takes in an array of NFT Ids
+    const inputNftIdArr = nftIdsInput[0].value.split(' ');
+    // setPackPriceGloabl(packPriceVal);
+    listPackToSmartContract(packPriceVal, inputNftIdArr);
   };
 
   const fileInput = (e) => {
@@ -102,7 +110,6 @@ const ListPack = () => {
             type="text"
             name="nftIdsArr"
             placeholder="NFT Ids"
-            maxLength="10"
             onChange={updateNftIds}
           />
           <label>Upload pack image photo</label>
@@ -119,6 +126,13 @@ const ListPack = () => {
             onClick={getInputInfoAndCallContract}
           >
             List Pack
+          </button>
+          <button
+            className="btn-global"
+            style={{ marginTop: '1.5rem' }}
+            onClick={uploadImage}
+          >
+            Set Image
           </button>
         </form>
         <div className="list-pack"></div>
