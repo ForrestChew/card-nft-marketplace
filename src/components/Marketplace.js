@@ -6,14 +6,13 @@ import IsLoading from './IsLoading';
 import NoPackSelected from './NoPackSelected';
 import Card from './Card';
 import ActionInfoSection from './ActionInfoSection';
-import '../styles/cards.css';
+import '../styles/marketplace.css';
 
 const Marketplace = () => {
-  const packImg =
-    'https://imgs.search.brave.com/6ZRXjdjAX4Nn79yp-klSMBB6kDisZdnk5B-kkKTHrjE/rs:fit:695:225:1/g:ce/aHR0cHM6Ly90c2Uy/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC4y/QnEzMUIwMjFkUHA3/S1FLdWVaaDVBSGFG/RCZwaWQ9QXBp';
   const [nftPackListings, setNftPackListings] = useState([]);
-  const [activePack, setActivePack] = useContext(AppContext);
-  const { data, isLoading } = useMoralisQuery('NewPackListing');
+  const [activePack] = useContext(AppContext);
+
+  const { data, isLoading } = useMoralisQuery('NewPackListings');
 
   useEffect(() => {
     try {
@@ -31,28 +30,42 @@ const Marketplace = () => {
         <div className="marketplace-components">
           <div className="nft-packs-container">
             {nftPackListings.map((nftPackListing, index) => {
-              const { packListingId, packPrice, packSeller, nftIds } =
+              const { name, packImage, packListingId, packPrice, packSeller, nftIds } =
                 nftPackListing.attributes;
+                let packImgUrl;
+                try {
+                  packImgUrl = packImage._url;
+                } catch(error) {
+                  console.log(error)
+                }
               return (
                 <Card
                   key={index}
-                  packImg={packImg}
+                  packName={name}
+                  packImg={packImgUrl}
                   packPrice={Moralis.Units.FromWei(packPrice)}
                   packListingId={packListingId}
-                  nftCount={nftIds.length}
                   packSeller={packSeller}
-                  nftIds={nftIds}
+                  nftIds={nftIds.join(', ')}
                 />
               );
             })}
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
+            <Card />
           </div>
           <div className="action-info-section">
             {/* Checks whether there is a pack selected by checking
-            if a pack id exists within the global context */}
-            {activePack.packListingId ? (
+            if a name exists within the global context */}
+            {activePack.packName ? (
               <ActionInfoSection
-                // packName={packName}
-                packImg={packImg}
+                packName={activePack.packName}
                 packPrice={activePack.packPrice}
                 packListingId={activePack.packListingId}
                 nftCount={activePack.nftIds.length}
