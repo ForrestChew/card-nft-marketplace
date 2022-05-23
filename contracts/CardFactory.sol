@@ -30,7 +30,7 @@ contract CardFactory is
     address[] public addressesEligibleForRewards;
     // NFT rarity is not defined in the JSON schema as the rarity may change
     mapping(uint256 => string) public nftRarity;
-    // NFT's Id --> pack Id to which it belongs
+    // NFT's Id --> set Id to which it belongs
     mapping(uint256 => uint256) public nftIdToPackId;
     // Pack Id --> Owner Address --> number of NFTs owned per that pack. Maximum --> 5
     mapping(uint256 => mapping(address => uint256))
@@ -259,7 +259,7 @@ contract CardFactory is
                     addressesEligibleForRewards.pop();
                 }
             }
-        } 
+        }
     }
 
     /** @notice Returns an array of addresses eligible for reward 
