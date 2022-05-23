@@ -1,10 +1,9 @@
 const { expect } = require('chai');
-const { ethers, assert } = require('hardhat');
+const { ethers } = require('hardhat');
 
 const SAMPLE_NFT_URI =
   'https://gateway.pinata.cloud/ipfs/QmVo4Bv31zLRvFiAXL6Z8te1kmuu1gYNEnneyBb2FF2aNp';
 const ONE_ETHER = ethers.utils.parseEther('1');
-const ONE_ETHER_PLUS_TAX = ethers.utils.parseEther('1.05');
 const vrfCoordinator = '0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed';
 const keyHash =
   '0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f';
@@ -51,9 +50,9 @@ describe('CardNftMarketplace', () => {
   describe('listPack function', () => {
     it('Should emit NewPackListing event', async () => {
       expect(await cardFactory.ownerOf(1)).to.equal(accountOne.address);
-      await expect(cardMarketplace.listPack(ONE_ETHER, [1, 2, 3]))
+      await expect(cardMarketplace.listPack(ONE_ETHER, [1, 2, 3], 'TestPack'))
         .to.emit(cardMarketplace, 'NewPackListing')
-        .withArgs(1, ONE_ETHER, accountOne.address, [1, 2, 3]);
+        .withArgs('TestPack', ONE_ETHER, accountOne.address, [1, 2, 3]);
     });
     it('CardNftMarketplace should have ownership of listed NFTs', async () => {
       // Confirms that the marketplace smart contract has ownership of the listed NFTs
@@ -116,7 +115,9 @@ describe('CardNftMarketplace', () => {
         .setApprovalForAll(cardMarketplace.address, true);
       // Lists 10 packs in marketplace
       for (let i = 0; i < 10; i++) {
-        await cardMarketplace.connect(accountTwo).listPack(ONE_ETHER, [i + 1]);
+        await cardMarketplace
+          .connect(accountTwo)
+          .listPack(ONE_ETHER, [i + 1], `Test${i}`);
       }
       // Delists individual pack from marketplace
       await cardMarketplace.connect(accountTwo).delistPack(1);

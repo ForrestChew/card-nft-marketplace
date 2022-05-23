@@ -62,7 +62,7 @@ describe('CardNftMarketplace', () => {
         cardMarketplace.address
       );
     }
-    await cardMarketplace.listPack(ONE_ETHER, [1, 2, 3]);
+    await cardMarketplace.listPack(ONE_ETHER, [1, 2, 3], 'Test');
     const returnedListing = await cardMarketplace.getListingsByAddress(
       accountOne.address
     );
