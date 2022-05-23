@@ -1,6 +1,6 @@
 .marketplace-components {
   display: flex;
-  margin-top: 3rem;
+  margin: 3rem 0rem 3rem 0rem;
 }
 
 .action-info-section {
@@ -16,7 +16,6 @@
 
 .nft-packs-container {
   display: flex;
-  justify-content: start;
   flex-wrap: wrap;
   width: max-content;
   margin-left: 2.5rem;
@@ -30,6 +29,7 @@
   font-family: 'Open Sans', sans-serif;
   box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
   background-color: #72777d;
+  user-select: none;
 }
 
 .nft-pack-container:hover {

@@ -57,6 +57,14 @@
   color: black;
 }
 
+.nft-info-container {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Open Sans', sans-serif;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
 .footer {
   display: flex;
   justify-content: center;

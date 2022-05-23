@@ -1,8 +1,30 @@
 .list-pack-container {
   display: flex;
   justify-content: center;
-  margin: 0rem 15rem 0rem 15rem;
-  border: 1px solid black;
+  margin: 5rem 38rem 0rem 38rem;
+  padding: 2rem 0 2rem 0;
+  border-radius: 1rem;
+  background-color: gray;
+  box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
+}
+
+.list-pack-form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+input {
+  height: 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+}
+
+input,
+label {
+  margin: 0.5rem 0.5rem 0.5rem 0.5rem;
 }
 
 .list-pack {
