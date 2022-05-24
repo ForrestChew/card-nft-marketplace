@@ -5,7 +5,7 @@ import { useMoralis } from 'react-moralis';
 import NavigationBar from './NavigationBar';
 import About from './About';
 import Marketplace from './Marketplace';
-import ListPack from './ListPack';
+import CreateItems from './CreateItems';
 import LeaderBoard from './LeaderBoard';
 import Profile from './Profile';
 import '../styles/main.css';
@@ -28,7 +28,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<About />} />
         <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="list-pack" element={<ListPack />} />
+        <Route path="create-items" element={<CreateItems />} />
         <Route path="/leader-board" element={<LeaderBoard />} />
         <Route
           path="/profile"
