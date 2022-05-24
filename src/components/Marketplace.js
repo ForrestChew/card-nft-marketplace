@@ -30,21 +30,27 @@ const Marketplace = () => {
         <div className="marketplace-components">
           <div className="nft-packs-container">
             {nftPackListings.map((nftPackListing, index) => {
-              const { name, packImage, packListingId, packPrice, packSeller, nftIds } =
-                nftPackListing.attributes;
-                let packImgUrl;
-                try {
-                  packImgUrl = packImage._url;
-                } catch(error) {
-                  console.log(error)
-                }
+              const {
+                name,
+                packImage,
+                packListingId,
+                packPrice,
+                packSeller,
+                nftIds,
+              } = nftPackListing.attributes;
+              let packImgUrl;
+              try {
+                packImgUrl = packImage._url;
+              } catch (error) {
+                console.log(error);
+              }
               return (
                 <Card
                   key={index}
-                  packName={name}
+                  packName={`Name: ${name}`}
                   packImg={packImgUrl}
-                  packPrice={Moralis.Units.FromWei(packPrice)}
-                  packListingId={packListingId}
+                  packPrice={`Price: ${Moralis.Units.FromWei(packPrice)}`}
+                  packListingId={`Pack ID: ${packListingId}`}
                   packSeller={packSeller}
                   nftIds={nftIds.join(', ')}
                 />
