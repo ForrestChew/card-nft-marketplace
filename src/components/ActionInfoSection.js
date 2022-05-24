@@ -21,10 +21,8 @@ const ActionInfoSection = ({
   const [currentImgIdx, setCurrentImgIdx] = useState(0);
   const [nftRarity, setNftRarity] = useState('');
   const [nftSetId, setNftSetId] = useState(0);
-
-  const nftIdsIsolation = nftIds.split(' ')[currentImgIdx].replace(',', '');
-  console.log(nftIdsIsolation);
-
+  const nftIdsArr = nftIds.split(' ');
+  const nftIdsIsolation = nftIdsArr[currentImgIdx].replace(',', '').trim();
   const { Moralis } = useMoralis();
 
   useEffect(() => {
@@ -38,7 +36,7 @@ const ActionInfoSection = ({
         factoryAbi,
         provider
       );
-      setNftRarity(await cardFactory.nftRarity(nftIdsIsolation[currentImgIdx]));
+      setNftRarity(await cardFactory.nftRarity(nftIdsIsolation));
     };
     getNftRarity();
   }, [currentImgIdx]);
@@ -52,20 +50,17 @@ const ActionInfoSection = ({
         factoryAbi,
         provider
       );
-      setNftSetId(
-        await cardFactory.nftIdToPackId(nftIdsIsolation[currentImgIdx])
-      );
+      setNftSetId(await cardFactory.nftIdToPackId(nftIdsIsolation));
     };
     getNftSetId();
   }, [currentImgIdx]);
 
-  const deleteMoralisTable = async () => {
+  const removeDatabaseEntry = async () => {
     const PackListings = Moralis.Object.extend('NewPackListings');
     const query = new Moralis.Query(PackListings);
     query.equalTo('packListingId', packListingId);
     query.equalTo('name', packName);
     const queryFound = await query.find();
-    console.log(queryFound);
     await queryFound[0].destroy().then(
       () => {
         console.log('Deleted');
@@ -91,20 +86,20 @@ const ActionInfoSection = ({
         gasLimit: 1000000,
       })
       .then(() => {
-        deleteMoralisTable();
+        removeDatabaseEntry();
       });
   };
 
   // Rotates to the next image in NFT carousel
   const nextImg = () => {
     setCurrentImgIdx(
-      currentImgIdx === nftIdsIsolation.length - 1 ? 0 : currentImgIdx + 1
+      currentImgIdx === nftIdsArr.length - 1 ? 0 : currentImgIdx + 1
     );
   };
   // Rotates to the previous image in NFT carousel
   const prevImg = () => {
     setCurrentImgIdx(
-      currentImgIdx === 0 ? nftIdsIsolation.length - 1 : currentImgIdx - 1
+      currentImgIdx === 0 ? nftIdsArr.length - 1 : currentImgIdx - 1
     );
   };
 
