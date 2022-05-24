@@ -1,14 +1,21 @@
-.list-pack-container {
+.create-items-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.container {
   display: flex;
   justify-content: center;
-  margin: 5rem 38rem 0rem 38rem;
+  margin: 5rem 0rem 0rem 0rem;
+  width: 35%;
   padding: 2rem 0 2rem 0;
   border-radius: 1rem;
+  color: white;
   background-color: gray;
   box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
 }
 
-.list-pack-form {
+form {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -25,7 +32,4 @@ input {
 input,
 label {
   margin: 0.5rem 0.5rem 0.5rem 0.5rem;
-}
-
-.list-pack {
 }

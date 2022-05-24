@@ -1,0 +1,29 @@
+.profile-container {
+  display: flex;
+}
+
+.packs {
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 2.5rem 0rem 2.5rem;
+}
+
+.user-pack-form {
+  position: sticky;
+  top: 6rem;
+  padding: 1rem 0rem 1rem 0rem;
+  color: white;
+  background-color: gray;
+  border: 1px solid crimson;
+  border-radius: 1rem;
+  box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
+}
+
+.set-check {
+  border-left: 1px solid black;
+  width: 15%;
+}
+
+.input-box {
+  width: 80%;
+}
