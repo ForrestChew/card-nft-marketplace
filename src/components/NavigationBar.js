@@ -26,9 +26,9 @@ const NavigationBar = () => {
           className={(navData) =>
             navData.isActive ? 'list-item-active' : 'list-item'
           }
-          to="/list-pack"
+          to="/create-items"
         >
-          List Pack
+          Create Items
         </NavLink>
         <NavLink
           className={(navData) =>
