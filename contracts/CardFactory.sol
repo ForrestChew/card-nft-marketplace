@@ -32,7 +32,7 @@ contract CardFactory is
     mapping(uint256 => string) public nftRarity;
     // NFT's Id --> set Id to which it belongs
     mapping(uint256 => uint256) public nftIdToPackId;
-    // Pack Id --> Owner Address --> number of NFTs owned per that pack. Maximum --> 5
+    // Set Id --> Owner Address --> number of NFTs owned per that pack. Maximum --> 5
     mapping(uint256 => mapping(address => uint256))
         public numOfNftsOwnedPerPack;
 
