@@ -174,18 +174,17 @@ contract CardFactory is
         }
     }
 
-    /** @notice Verifies that the caller has a complete NFT pack meaning
-    they have all five NFTs from the same pack. If verification is succesful,
-    the user will start recieving rewards.
+    /** @notice Verifies that the caller has a complete NFT set meaning
+    they have all five NFTs from the same set. If verification is succesful,
+    the user is eligible for rewards.
     */
-    /// @param packId The NFT pack Id the caller wishes to verify
-    function verifyCompletePackOwnerShip(uint256 packId) public {
-        uint256 packAmount = numOfNftsOwnedPerPack[packId][msg.sender];
+    /// @param setId The NFT set Id the caller wishes to verify
+    function verifyCompletePackOwnerShip(uint256 setId) public {
+        uint256 setAmount = numOfNftsOwnedPerPack[setId][msg.sender];
         require(
-            packAmount == 5,
+            setAmount == 5,
             "verifyCompletePackOwnerShip: Sorry, you do not have a complete set :("
         );
-        // rewardEligibilityMultiplier[msg.sender] += 1;
         addressesEligibleForRewards.push(msg.sender);
     }
 
