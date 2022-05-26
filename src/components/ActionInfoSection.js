@@ -56,7 +56,7 @@ const ActionInfoSection = ({
   }, [currentImgIdx]);
 
   const removeDatabaseEntry = async () => {
-    const PackListings = Moralis.Object.extend('NewPackListings');
+    const PackListings = Moralis.Object.extend('NewPackListing');
     const query = new Moralis.Query(PackListings);
     query.equalTo('packListingId', packListingId);
     query.equalTo('name', packName);
