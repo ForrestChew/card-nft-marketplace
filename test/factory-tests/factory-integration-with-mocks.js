@@ -54,7 +54,7 @@ describe('Card Nft factory integration with mocks', () => {
   it('Account with complete NFT pack can verify their address for rewards', async () => {
     const packId = 1;
     await cardFactory.connect(accountTwo).verifyCompletePackOwnerShip(packId);
-    expect(await cardFactory.addressesEligibleForRewards(0)).to.equal(
+    expect(await cardFactory.s_addressesEligibleForRewards(0)).to.equal(
       accountTwo.address
     );
   });
@@ -78,7 +78,7 @@ describe('Card Nft factory integration with mocks', () => {
       await mockVrf.fulfillRandomWords(requestId, cardFactory.address);
     });
     it('Should return random words to cart factory contract', async () => {
-      const randomWords = await cardFactory.randomWords(0);
+      const randomWords = await cardFactory.s_randomWords(0);
       expect(randomWords).to.equal(0);
     });
   });
@@ -103,7 +103,7 @@ describe('Card Nft factory integration with mocks', () => {
           accountOne.address,
           tokenIdToTransfer
         );
-      const packAmount = await cardFactory.numOfNftsOwnedPerPack(
+      const packAmount = await cardFactory.s_numOfNftsOwnedPerPack(
         1,
         accountTwo.address
       );
@@ -120,7 +120,7 @@ describe('Card Nft factory integration with mocks', () => {
           accountTwo.address,
           tokenIdToTransfer
         );
-      const packAmount = await cardFactory.numOfNftsOwnedPerPack(
+      const packAmount = await cardFactory.s_numOfNftsOwnedPerPack(
         1,
         accountTwo.address
       );

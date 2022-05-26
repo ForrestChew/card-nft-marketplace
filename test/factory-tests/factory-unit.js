@@ -52,7 +52,7 @@ describe('Card Factory', () => {
     });
     it('NFT rarity should be Iron', async () => {
       await cardFactory.createNftWithApprovalUser(SAMPLE_NFT_URI);
-      const nftRarity = await cardFactory.nftRarity(1);
+      const nftRarity = await cardFactory.s_nftRarity(1);
       expect(nftRarity).to.equal('Iron');
       expect(nftRarity).to.be.a('string');
     });
@@ -85,7 +85,7 @@ describe('Card Factory', () => {
         1,
         ETHEREUM_ZERO_ADDRESS
       );
-      const nftRarity = await cardFactory.nftRarity(1);
+      const nftRarity = await cardFactory.s_nftRarity(1);
       expect(nftRarity).to.equal('Gold');
     });
     it('NFT pack Id should be 1', async () => {
@@ -95,7 +95,7 @@ describe('Card Factory', () => {
         1,
         ETHEREUM_ZERO_ADDRESS
       );
-      const nftToPackId = await cardFactory.nftIdToPackId(1);
+      const nftToPackId = await cardFactory.s_nftIdToPackId(1);
       expect(nftToPackId).to.equal(1);
     });
     it('NFT Should have correct token Uri', async () => {
@@ -147,11 +147,11 @@ describe('Card Factory', () => {
         ETHEREUM_ZERO_ADDRESS
       );
       expect(
-        await cardFactory.numOfNftsOwnedPerPack(1, accountOne.address)
+        await cardFactory.s_numOfNftsOwnedPerPack(1, accountOne.address)
       ).to.equal(1);
       await cardFactory.transferFrom(accountOne.address, accountTwo.address, 1);
       expect(
-        await cardFactory.numOfNftsOwnedPerPack(1, accountTwo.address)
+        await cardFactory.s_numOfNftsOwnedPerPack(1, accountTwo.address)
       ).to.equal(1);
     });
   });

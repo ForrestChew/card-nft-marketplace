@@ -52,7 +52,7 @@ describe('CardNftMarketplace', () => {
       expect(await cardFactory.ownerOf(1)).to.equal(accountOne.address);
       await expect(cardMarketplace.listPack(ONE_ETHER, [1, 2, 3], 'TestPack'))
         .to.emit(cardMarketplace, 'NewPackListing')
-        .withArgs('TestPack', ONE_ETHER, accountOne.address, [1, 2, 3]);
+        .withArgs('TestPack', 1, ONE_ETHER, accountOne.address, [1, 2, 3]);
     });
     it('CardNftMarketplace should have ownership of listed NFTs', async () => {
       // Confirms that the marketplace smart contract has ownership of the listed NFTs
