@@ -22,7 +22,7 @@ const CreateItems = () => {
     e.preventDefault();
     const name = 'PackImg.png';
     const packImage = new Moralis.File(name, { base64: fileTarget });
-    const PackListings = Moralis.Object.extend('NewPackListings');
+    const PackListings = Moralis.Object.extend('NewPackListing');
     const query = new Moralis.Query(PackListings);
     query.equalTo('name', packName);
     const queryFound = await query.find();

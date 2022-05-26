@@ -12,7 +12,7 @@ const Marketplace = () => {
   const [nftPackListings, setNftPackListings] = useState([]);
   const [activePack] = useContext(AppContext);
 
-  const { data, isLoading } = useMoralisQuery('NewPackListings');
+  const { data, isLoading } = useMoralisQuery('NewPackListing');
 
   useEffect(() => {
     try {
