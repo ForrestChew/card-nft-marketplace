@@ -6,7 +6,6 @@ import NavigationBar from './NavigationBar';
 import About from './About';
 import Marketplace from './Marketplace';
 import CreateItems from './CreateItems';
-import LeaderBoard from './LeaderBoard';
 import Profile from './Profile';
 import '../styles/main.css';
 
@@ -29,7 +28,6 @@ const App = () => {
         <Route path="/" element={<About />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="create-items" element={<CreateItems />} />
-        <Route path="/leader-board" element={<LeaderBoard />} />
         <Route
           path="/profile"
           element={<Profile userAddress={userAddress} />}

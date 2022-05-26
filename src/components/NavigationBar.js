@@ -34,14 +34,6 @@ const NavigationBar = () => {
           className={(navData) =>
             navData.isActive ? 'list-item-active' : 'list-item'
           }
-          to="/leader-board"
-        >
-          Leaderboard
-        </NavLink>
-        <NavLink
-          className={(navData) =>
-            navData.isActive ? 'list-item-active' : 'list-item'
-          }
           to="/profile"
         >
           Profile
