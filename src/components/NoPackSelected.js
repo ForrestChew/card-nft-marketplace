@@ -1,5 +1,3 @@
-import React from 'react';
-
 const NoPackSelected = () => {
   return (
     <div className="no-pack-selected">
