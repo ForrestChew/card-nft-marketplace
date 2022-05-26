@@ -1,29 +1,58 @@
-.profile-container {
+.forms-container {
   display: flex;
-}
-
-.packs {
-  display: flex;
-  flex-direction: column;
-  margin: 2rem 2.5rem 0rem 2.5rem;
-}
-
-.user-pack-form {
+  justify-content: center;
   position: sticky;
-  top: 6rem;
-  padding: 1rem 0rem 1rem 0rem;
+  top: 4rem;
+  margin-top: 1rem;
+  z-index: 10;
+  background-color: whitesmoke;
+  border-bottom: 1px solid black;
+}
+
+.packs-container {
+  display: flex;
+}
+
+.user-packs {
+  flex-wrap: wrap;
+  margin: 1rem 0 1rem 2rem;
+}
+
+.forms {
+  padding: 0rem 0rem 1rem 0rem;
   color: white;
   background-color: gray;
-  border: 1px solid crimson;
   border-radius: 1rem;
-  box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
-}
-
-.set-check {
-  border-left: 1px solid black;
-  width: 15%;
+  box-shadow: 0.1rem 0.1rem 0.1rem 0.01rem black;
+  margin: 0 1rem 2rem 1rem;
 }
 
 .input-box {
   width: 80%;
+}
+
+.user-nfts {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 1.5rem 0 1.5rem 7rem;
+  margin-left: 4rem;
+  padding-left: 4rem;
+  border-left: 1px solid black;
+}
+
+.info-box {
+  text-align: center;
+  width: 20%;
+  font-family: 'Open Sans', sans-serif;
+  height: 7.5rem;
+}
+
+.content {
+  margin-top: 0.35rem;
+  font-size: smaller;
+  color: black;
+  background-color: #d9d9d6;
+  border-bottom-left-radius: 1rem;
+  height: 50%;
+  overflow-y: scroll;
 }
