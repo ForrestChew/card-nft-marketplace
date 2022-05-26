@@ -16,14 +16,15 @@ contract CardNftMarketplace is Ownable {
     Counters.Counter public packListingCount;
     address public immutable nftCardFactory;
     address public immutable marketplaceOwner;
+
     struct PackListing {
         uint256 packListingId;
         uint256 packPrice;
         address packSeller;
         uint256[] nftIds;
     }
-
-    mapping(address => PackListing[]) public listingsSeller;
+    // Address --> array of pack listings
+    mapping(address => PackListing[]) public s_listingsSeller;
 
     event NewPackListing(
         string name,
@@ -32,9 +33,7 @@ contract CardNftMarketplace is Ownable {
         address packSeller,
         uint256[] nftIds
     );
-
     event PackDelisted(uint256 packListingId);
-
     event ListingSold(
         address indexed seller,
         address indexed buyer,
@@ -46,7 +45,6 @@ contract CardNftMarketplace is Ownable {
     /** @param _nftCardsAddr will be the deployed ERC721 cards address. This is
     needed in order to execute functions steming from the ERC721 smart contract.
     */
-
     constructor(address _marketplaceOwner, address _nftCardsAddr) {
         marketplaceOwner = _marketplaceOwner;
         nftCardFactory = _nftCardsAddr;
@@ -69,8 +67,8 @@ contract CardNftMarketplace is Ownable {
                 _nftIds[i]
             );
         }
-        uint256 packListingId = listingsSeller[msg.sender].length + 1;
-        listingsSeller[msg.sender].push(
+        uint256 packListingId = s_listingsSeller[msg.sender].length + 1;
+        s_listingsSeller[msg.sender].push(
             PackListing({
                 packListingId: packListingId,
                 packPrice: _packPrice,
@@ -93,19 +91,19 @@ contract CardNftMarketplace is Ownable {
         uint256 packListingIdx;
         bool packIdExists;
         // Transfers NFTs in pack back into the listers wallet
-        for (uint256 i = 0; i < listingsSeller[msg.sender].length; i++) {
-            if (listingsSeller[msg.sender][i].packListingId == _packId) {
+        for (uint256 i = 0; i < s_listingsSeller[msg.sender].length; i++) {
+            if (s_listingsSeller[msg.sender][i].packListingId == _packId) {
                 packListingIdx = i;
                 packIdExists = true;
                 for (
                     uint256 j = 0;
-                    j < listingsSeller[msg.sender][i].nftIds.length;
+                    j < s_listingsSeller[msg.sender][i].nftIds.length;
                     j++
                 ) {
                     IERC721(nftCardFactory).transferFrom(
                         address(this),
                         msg.sender,
-                        listingsSeller[msg.sender][i].nftIds[j]
+                        s_listingsSeller[msg.sender][i].nftIds[j]
                     );
                 }
             }
@@ -114,14 +112,14 @@ contract CardNftMarketplace is Ownable {
             // Shifts elements to the right from _packId's index and pops off the last element
             for (
                 uint256 i = packListingIdx;
-                i < listingsSeller[msg.sender].length - 1;
+                i < s_listingsSeller[msg.sender].length - 1;
                 i++
             ) {
-                listingsSeller[msg.sender][i] = listingsSeller[msg.sender][
+                s_listingsSeller[msg.sender][i] = s_listingsSeller[msg.sender][
                     i + 1
                 ];
             }
-            listingsSeller[msg.sender].pop();
+            s_listingsSeller[msg.sender].pop();
             emit PackDelisted(_packId);
         } else revert("delistPack: Non-existant pack ID");
     }
@@ -135,24 +133,24 @@ contract CardNftMarketplace is Ownable {
     {
         // Loops through packs owned by @param _listingSeller and checks
         // whether there is a matching pack id to the @param _packId
-        for (uint256 i = 0; i < listingsSeller[_listingSeller].length; i++) {
-            if (listingsSeller[_listingSeller][i].packListingId == _packId) {
-                uint256 threePercentTax = ((listingsSeller[_listingSeller][i]
+        for (uint256 i = 0; i < s_listingsSeller[_listingSeller].length; i++) {
+            if (s_listingsSeller[_listingSeller][i].packListingId == _packId) {
+                uint256 threePercentTax = ((s_listingsSeller[_listingSeller][i]
                     .packPrice * 500) / 10000);
                 require(
-                    msg.value == listingsSeller[_listingSeller][i].packPrice,
+                    msg.value == s_listingsSeller[_listingSeller][i].packPrice,
                     "buyNftPack: Wrong amount"
                 );
                 // Loops through pack listing NFT id array, and tranfers them to pack buyer
                 for (
                     uint256 j = 0;
-                    j < listingsSeller[_listingSeller][i].nftIds.length;
+                    j < s_listingsSeller[_listingSeller][i].nftIds.length;
                     j++
                 ) {
                     IERC721(nftCardFactory).transferFrom(
                         address(this),
                         msg.sender,
-                        listingsSeller[_listingSeller][i].nftIds[j]
+                        s_listingsSeller[_listingSeller][i].nftIds[j]
                     );
                 }
                 (bool txFee, ) = _listingSeller.call{value: threePercentTax}(
@@ -160,11 +158,11 @@ contract CardNftMarketplace is Ownable {
                 );
                 require(txFee, "txFee: Tx failed");
                 (bool txSeller, ) = _listingSeller.call{
-                    value: listingsSeller[_listingSeller][i].packPrice -
+                    value: s_listingsSeller[_listingSeller][i].packPrice -
                         threePercentTax
                 }("");
                 require(txSeller, "sellerTx: Tx failed");
-                delete listingsSeller[_listingSeller][i];
+                delete s_listingsSeller[_listingSeller][i];
                 emit ListingSold(_listingSeller, msg.sender, msg.value);
             } else {
                 revert("buyNftPack: Pack does not exist");
@@ -180,6 +178,6 @@ contract CardNftMarketplace is Ownable {
         view
         returns (PackListing[] memory)
     {
-        return listingsSeller[_listingSeller];
+        return s_listingsSeller[_listingSeller];
     }
 }
