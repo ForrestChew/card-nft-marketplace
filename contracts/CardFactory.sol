@@ -9,8 +9,13 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "hardhat/console.sol";
 
-/// @title NFT contract
+/** @notice ERC721 Token contract whos owner has the right, but not obligation
+to assign minted NFTs into sets. If someone collects all five NFTs belonging to
+the same set, their address will be eligible for rewards. These rewards come in
+the form of more NFTs created by the owner.
+*/  
 /// @author https://twitter.com/BossMcBara
+/// @dev WARNING: Most write functions are incredibly gas intensive and therefore expensive.
 contract CardFactory is
     ERC721URIStorage,
     Ownable,
@@ -24,17 +29,17 @@ contract CardFactory is
     uint32 immutable CALL_BACK_GAS_LIMIT;
     uint64 immutable SUBSCRIPTION_ID;
     uint16 immutable REQUEST_CONFIRMATIONS;
-    uint256 requestId;
-    address public cardMarketplaceAddress;
-    uint256[] public randomWords;
-    address[] public addressesEligibleForRewards;
+    uint256 s_requestId;
+    address public s_cardMarketplaceAddress;
+    uint256[] public s_randomWords;
+    address[] public s_addressesEligibleForRewards;
     // NFT rarity is not defined in the JSON schema as the rarity may change
-    mapping(uint256 => string) public nftRarity;
+    mapping(uint256 => string) public s_nftRarity;
     // NFT's Id --> set Id to which it belongs
-    mapping(uint256 => uint256) public nftIdToPackId;
+    mapping(uint256 => uint256) public s_nftIdToPackId;
     // Set Id --> Owner Address --> number of NFTs owned per that pack. Maximum --> 5
     mapping(uint256 => mapping(address => uint256))
-        public numOfNftsOwnedPerPack;
+        public s_numOfNftsOwnedPerPack;
 
     /// @notice Sets The NFT collection name and symbol on contract creation
     /// @param collectionName The name of the NFT collection
@@ -64,7 +69,7 @@ contract CardFactory is
         public
         onlyOwner
     {
-        cardMarketplaceAddress = _marketplaceAddress;
+        s_cardMarketplaceAddress = _marketplaceAddress;
     }
 
     /// @notice Any user can call this function to create an NFT. The rarity will only be IRON.
@@ -75,10 +80,10 @@ contract CardFactory is
     */
     function createNftWithApprovalUser(string memory tokenUri) public {
         _tokenIds.increment();
-        nftRarity[_tokenIds.current()] = "Iron";
+        s_nftRarity[_tokenIds.current()] = "Iron";
         _mint(msg.sender, _tokenIds.current());
         _setTokenURI(_tokenIds.current(), tokenUri);
-        _approve(cardMarketplaceAddress, _tokenIds.current());
+        _approve(s_cardMarketplaceAddress, _tokenIds.current());
     }
 
     /// @notice Creates an NFT and approves address to transferNFT.
@@ -97,9 +102,9 @@ contract CardFactory is
         address approvedAddress
     ) public onlyOwner {
         _tokenIds.increment();
-        nftRarity[_tokenIds.current()] = rarity;
-        nftIdToPackId[_tokenIds.current()] = packId;
-        numOfNftsOwnedPerPack[packId][msg.sender] += 1;
+        s_nftRarity[_tokenIds.current()] = rarity;
+        s_nftIdToPackId[_tokenIds.current()] = packId;
+        s_numOfNftsOwnedPerPack[packId][msg.sender] += 1;
         _mint(msg.sender, _tokenIds.current());
         _setTokenURI(_tokenIds.current(), tokenUri);
         _approve(approvedAddress, _tokenIds.current());
@@ -119,7 +124,7 @@ contract CardFactory is
         address approvedAddress
     ) public onlyOwner {
         _tokenIds.increment();
-        nftRarity[_tokenIds.current()] = rarity;
+        s_nftRarity[_tokenIds.current()] = rarity;
         _mint(msg.sender, _tokenIds.current());
         _setTokenURI(_tokenIds.current(), tokenUri);
         _approve(approvedAddress, _tokenIds.current());
@@ -139,7 +144,7 @@ contract CardFactory is
         address approvedAddress
     ) public onlyOwner {
         _tokenIds.increment();
-        nftRarity[_tokenIds.current()] = rarity;
+        s_nftRarity[_tokenIds.current()] = rarity;
         _mint(address(this), _tokenIds.current());
         _setTokenURI(_tokenIds.current(), tokenUri);
         _approve(approvedAddress, _tokenIds.current());
@@ -158,16 +163,16 @@ contract CardFactory is
         address to,
         uint256 tokenId
     ) public override nonReentrant {
-        uint256 packId = nftIdToPackId[tokenId];
-        uint256 packAmount = numOfNftsOwnedPerPack[packId][from];
+        uint256 packId = s_nftIdToPackId[tokenId];
+        uint256 packAmount = s_numOfNftsOwnedPerPack[packId][from];
         if (packId > 0 && packAmount == 5) {
-            numOfNftsOwnedPerPack[packId][to] += 1;
-            numOfNftsOwnedPerPack[packId][from] -= 1;
+            s_numOfNftsOwnedPerPack[packId][to] += 1;
+            s_numOfNftsOwnedPerPack[packId][from] -= 1;
             super._transfer(from, to, tokenId);
             _removeEligibilityMultiplier(from);
         } else if (packId > 0) {
-            numOfNftsOwnedPerPack[packId][to] += 1;
-            numOfNftsOwnedPerPack[packId][from] -= 1;
+            s_numOfNftsOwnedPerPack[packId][to] += 1;
+            s_numOfNftsOwnedPerPack[packId][from] -= 1;
             super._transfer(from, to, tokenId);
         } else {
             super._transfer(from, to, tokenId);
@@ -180,12 +185,12 @@ contract CardFactory is
     */
     /// @param setId The NFT set Id the caller wishes to verify
     function verifyCompletePackOwnerShip(uint256 setId) public {
-        uint256 setAmount = numOfNftsOwnedPerPack[setId][msg.sender];
+        uint256 setAmount = s_numOfNftsOwnedPerPack[setId][msg.sender];
         require(
             setAmount == 5,
             "verifyCompletePackOwnerShip: Sorry, you do not have a complete set :("
         );
-        addressesEligibleForRewards.push(msg.sender);
+        s_addressesEligibleForRewards.push(msg.sender);
     }
 
     /** @notice Only owner can call this function to distribute rewards amoungst
@@ -196,10 +201,10 @@ contract CardFactory is
         public
         onlyOwner
     {
-        for (uint256 i = 0; i < randomWords.length; i++) {
+        for (uint256 i = 0; i < s_randomWords.length; i++) {
             transferFrom(
                 address(this),
-                addressesEligibleForRewards[randomWords[i]],
+                s_addressesEligibleForRewards[s_randomWords[i]],
                 _rewardNftIds[i]
             );
         }
@@ -213,8 +218,8 @@ contract CardFactory is
     array that are eligible to win an NFT with an additional number for accounts 1 - 4. 
     */
     function requestRandomWords() external onlyOwner {
-        uint32 numWords = uint32(addressesEligibleForRewards.length) / 5 + 1;
-        requestId = COORDINATOR.requestRandomWords(
+        uint32 numWords = uint32(s_addressesEligibleForRewards.length) / 5 + 1;
+        s_requestId = COORDINATOR.requestRandomWords(
             KEY_HASH,
             SUBSCRIPTION_ID,
             REQUEST_CONFIRMATIONS,
@@ -228,12 +233,12 @@ contract CardFactory is
         internal
         override
     {
-        randomWords = _randomWords;
-        for (uint256 i = 0; i < randomWords.length; i++) {
+        s_randomWords = _randomWords;
+        for (uint256 i = 0; i < s_randomWords.length; i++) {
             // Random words are in the range of 0 --> length of eligible addresses
-            randomWords[i] =
-                randomWords[i] %
-                addressesEligibleForRewards.length;
+            s_randomWords[i] =
+                s_randomWords[i] %
+                s_addressesEligibleForRewards.length;
         }
     }
 
@@ -243,19 +248,19 @@ contract CardFactory is
         private
     {
         // Pops off address from element shift to reduce reward multiplier
-        if (addressesEligibleForRewards.length == 1)
-            addressesEligibleForRewards.pop();
-        else if (addressesEligibleForRewards.length > 1) {
+        if (s_addressesEligibleForRewards.length == 1)
+            s_addressesEligibleForRewards.pop();
+        else if (s_addressesEligibleForRewards.length > 1) {
             for (
                 uint256 i = 0;
-                i < addressesEligibleForRewards.length - 1;
+                i < s_addressesEligibleForRewards.length - 1;
                 i++
             ) {
-                if (addressesEligibleForRewards[i] == addrToRemoveMultiplier) {
-                    addressesEligibleForRewards[
+                if (s_addressesEligibleForRewards[i] == addrToRemoveMultiplier) {
+                    s_addressesEligibleForRewards[
                         i
-                    ] = addressesEligibleForRewards[i + 1];
-                    addressesEligibleForRewards.pop();
+                    ] = s_addressesEligibleForRewards[i + 1];
+                    s_addressesEligibleForRewards.pop();
                 }
             }
         }
@@ -270,8 +275,8 @@ contract CardFactory is
         returns (address[] memory, uint256)
     {
         return (
-            addressesEligibleForRewards,
-            addressesEligibleForRewards.length
+            s_addressesEligibleForRewards,
+            s_addressesEligibleForRewards.length
         );
     }
 }
