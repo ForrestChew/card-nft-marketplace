@@ -4,6 +4,9 @@ package-lock.json
 coverage
 coverage.json
 typechain
+venv/
+.vscode
+nft_metadata_dir/
 
 #Hardhat files
 cache
