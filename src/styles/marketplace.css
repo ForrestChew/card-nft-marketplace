@@ -6,7 +6,6 @@
 .action-info-section {
   position: sticky;
   top: 6rem;
-  border: 1px solid black;
   margin-right: 5rem;
   height: 50%;
   box-shadow: 0.3rem 0.3rem 0.5rem 0.01rem black;
