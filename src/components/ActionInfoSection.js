@@ -25,36 +25,49 @@ const ActionInfoSection = ({
   const nftIdsIsolation = nftIdsArr[currentImgIdx].replace(',', '').trim();
   const { Moralis } = useMoralis();
 
+  // Returns an instance of Factory smart contract to caller
+  const getContractFactoryInstance = async () => {
+    const provider = Moralis.web3;
+    const ethers = Moralis.web3Library;
+    const signer = provider.getSigner();
+    const cardFactory = new ethers.Contract(factoryAddress, factoryAbi, signer);
+    return cardFactory;
+  };
+
+  // Gets Marketplace smart contract instance
+  const getContractMarketplaceInstance = async () => {
+    const provider = Moralis.web3;
+    const ethers = Moralis.web3Library;
+    const signer = provider.getSigner();
+    const cardMarketplace = new ethers.Contract(
+      marketplaceAddress,
+      marketplaceAbi,
+      signer
+    );
+    return cardMarketplace;
+  };
+
+  // Gets and displays rarity of the active NFT in carousel
   useEffect(() => {
     const getNftRarity = async () => {
-      const provider = Moralis.web3;
-      const ethers = Moralis.web3Library;
-      // As this fc calls a read only method in smart contract,
-      // only a provider is passed as a param. Signer not needed.
-      const cardFactory = new ethers.Contract(
-        factoryAddress,
-        factoryAbi,
-        provider
-      );
-      setNftRarity(await cardFactory.nftRarity(nftIdsIsolation));
+      const cardFactory = await getContractFactoryInstance();
+      setNftRarity(await cardFactory.s_nftRarity(nftIdsIsolation));
     };
     getNftRarity();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImgIdx]);
 
+  // Gets and displays the set ID to which the active NFT in carousel belongs
   useEffect(() => {
     const getNftSetId = async () => {
-      const provider = Moralis.web3;
-      const ethers = Moralis.web3Library;
-      const cardFactory = new ethers.Contract(
-        factoryAddress,
-        factoryAbi,
-        provider
-      );
-      setNftSetId(await cardFactory.nftIdToPackId(nftIdsIsolation));
+      const cardFactory = await getContractFactoryInstance();
+      setNftSetId(await cardFactory.s_nftIdToPackId(nftIdsIsolation));
     };
     getNftSetId();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImgIdx]);
 
+  // Removes pack listing entry from database when a pack is bought
   const removeDatabaseEntry = async () => {
     const PackListings = Moralis.Object.extend('NewPackListing');
     const query = new Moralis.Query(PackListings);
@@ -71,15 +84,9 @@ const ActionInfoSection = ({
     );
   };
 
+  // Interacts with Marketplace smart contract to buy pack
   const buyPack = async () => {
-    const provider = Moralis.web3;
-    const ethers = Moralis.web3Library;
-    const signer = provider.getSigner();
-    const cardMarketplace = new ethers.Contract(
-      marketplaceAddress,
-      marketplaceAbi,
-      signer
-    );
+    const cardMarketplace = await getContractMarketplaceInstance();
     await cardMarketplace
       .buyNftPack(packListingId, packSeller, {
         value: Moralis.Units.ETH(packPrice),
