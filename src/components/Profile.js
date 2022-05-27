@@ -7,14 +7,16 @@ import {
 import { factoryAddress, factoryAbi } from '../contract-info/factory-info';
 import { AppContext } from './Context';
 import { NFT } from 'web3uikit';
+import IsLoading from './IsLoading';
 import ActionInfoSection from './ActionInfoSection';
-import NoPackSelected from './NoPackSelected';
 import Card from './Card';
 import SimpleForm from './SimpleForm';
 import '../styles/marketplace.css';
 import '../styles/profile.css';
 
 const Profile = (userAddress) => {
+  const [isLoadingNfts, setIsLoadingNfts] = useState(true);
+  const [isLoadingPacks, setIsLoadingPacks] = useState(true);
   const [packId, setPackId] = useState(0);
   const [nftSetId, setNftSetId] = useState(0);
   const [nftId, setNftId] = useState(0);
@@ -25,6 +27,7 @@ const Profile = (userAddress) => {
   const [eligibleWinners, setEligibleWinners] = useState([]);
   // The user input address the user wants to see pack listings from
   const [listingsOwner, setListingsOwner] = useState('');
+  const [listingIds, setListingIds] = useState([]);
   const [activePack] = useContext(AppContext);
   const hasFetchedData = useRef(false);
 
@@ -38,6 +41,7 @@ const Profile = (userAddress) => {
     hasFetchedData.current = false;
   }, []);
 
+  // Gets and displays user owned NFTs that come from the card factory address
   useEffect(() => {
     const getUserNfts = async () => {
       try {
@@ -51,6 +55,7 @@ const Profile = (userAddress) => {
             nftId.token_id,
           ]);
         });
+        setIsLoadingNfts(false);
       } catch (e) {
         console.log(e);
       }
@@ -58,6 +63,7 @@ const Profile = (userAddress) => {
     if (!hasFetchedData.current) getUserNfts();
   }, []);
 
+  // Gets and displays pack listings owned by user
   useEffect(() => {
     const getUserPacks = async () => {
       try {
@@ -67,6 +73,7 @@ const Profile = (userAddress) => {
         const queryFound = query.find();
         setUserNftPackListings(await queryFound);
         hasFetchedData.current = true;
+        setIsLoadingPacks(false);
       } catch (e) {
         console.log(e);
       }
@@ -154,7 +161,8 @@ const Profile = (userAddress) => {
   };
 
   // Returns addresses that are eligible for rewards
-  const getEligibleWinners = async () => {
+  const getEligibleWinners = async (e) => {
+    e.preventDefault();
     const cardFactory = await getContractFactoryInstance();
     const response = await cardFactory.getEligibleRewardWinners();
     const winners = response[0];
@@ -166,8 +174,15 @@ const Profile = (userAddress) => {
   // Returns pack listings of an input address
   const getPackListings = async (e) => {
     e.preventDefault();
+    setListingIds([]);
     const cardMarketplace = await getContractMarketplaceInstance();
-    console.log(await cardMarketplace.getListingsByAddress(listingsOwner));
+    const listings = await cardMarketplace.getListingsByAddress(listingsOwner);
+    listings.forEach((listing) => {
+      setListingIds((listingsIds) => [
+        ...listingsIds,
+        parseInt(listing.packListingId),
+      ]);
+    });
   };
 
   const listingByAddressChange = (e) => {
@@ -188,128 +203,144 @@ const Profile = (userAddress) => {
 
   return (
     <>
-      <div className="forms-container">
-        <SimpleForm
-          labelTitle="Delist NFT Pack"
-          placeholder="Pack ID"
-          onChangeFc={packIdChange}
-          onClickFc={delistPack}
-          btnTitle="Delist"
-          fetchedData="..."
-        />
-        <SimpleForm
-          labelTitle="NFTs Owned in Set"
-          placeholder="Set ID"
-          onChangeFc={setIdChange}
-          onClickFc={getNftsInSet}
-          btnTitle="Check"
-          fetchedData={`ID ${nftSetId}: Amount ${parseInt(amountOfNftsPerSet)}`}
-        />
-        <SimpleForm
-          labelTitle="Check NFT Rarity"
-          placeholder="NFT ID"
-          onChangeFc={nftIdChange}
-          onClickFc={getNftRarity}
-          btnTitle="Check Rarity"
-          fetchedData={nftRarity}
-        />
-        <SimpleForm
-          labelTitle="Set ID to Verify"
-          placeholder="Set ID"
-          onChangeFc={setIdChange}
-          onClickFc={verifyFullSet}
-          btnTitle="Verify"
-          fetchedData="..."
-        />
-        <div
-          className="forms info-box"
-          style={{ borderBottomRightRadius: '0' }}
-        >
-          <form>
-            <label>Address</label>
-            <input
-              className="input-box"
-              type="text"
-              placeholder="Address"
-              min="1"
-              onChange={listingByAddressChange}
+      {isLoadingNfts || isLoadingPacks ? (
+        <IsLoading />
+      ) : (
+        <>
+          <div className="forms-container">
+            <SimpleForm
+              labelTitle="Delist NFT Pack"
+              placeholder="Pack ID"
+              onChangeFc={packIdChange}
+              onClickFc={delistPack}
+              btnTitle="Delist"
+              fetchedData="..."
             />
-            <button className="btn-global" onClick={getPackListings}>
-              Get Listings
-            </button>
-            <span style={{ marginTop: '.5rem' }}>{}</span>
-          </form>
-        </div>
-        <div
-          className="forms info-box"
-          style={{ borderBottomRightRadius: '0' }}
-        >
-          <p>Get Eligible Winners</p>
-          <button className="btn-global" onClick={getEligibleWinners}>
-            Get
-          </button>
-          <div className="content">
-            {eligibleWinners.map((winner) => {
-              return <p>{winner}</p>;
-            })}
+            <SimpleForm
+              labelTitle="NFTs Owned in Set"
+              placeholder="Set ID"
+              onChangeFc={setIdChange}
+              onClickFc={getNftsInSet}
+              btnTitle="Check"
+              fetchedData={`ID ${nftSetId}: Amount ${parseInt(
+                amountOfNftsPerSet
+              )}`}
+            />
+            <SimpleForm
+              labelTitle="Check NFT Rarity"
+              placeholder="NFT ID"
+              onChangeFc={nftIdChange}
+              onClickFc={getNftRarity}
+              btnTitle="Check Rarity"
+              fetchedData={nftRarity}
+            />
+            <SimpleForm
+              labelTitle="Set ID to Verify"
+              placeholder="Set ID"
+              onChangeFc={setIdChange}
+              onClickFc={verifyFullSet}
+              btnTitle="Verify"
+              fetchedData="..."
+            />
+            <div
+              className="forms info-box"
+              style={{ borderBottomRightRadius: '0' }}
+            >
+              <form>
+                <label>Address</label>
+                <input
+                  className="input-box"
+                  type="text"
+                  placeholder="Address"
+                  min="1"
+                  onChange={listingByAddressChange}
+                />
+                <button className="btn-global" onClick={getPackListings}>
+                  Get Listings
+                </button>
+                <span style={{ marginTop: '.5rem' }}>
+                  Listing IDs: {listingIds.join(', ')}
+                </span>
+              </form>
+            </div>
+            <div
+              className="forms info-box"
+              style={{ borderBottomRightRadius: '0' }}
+            >
+              <p>Get Eligible Winners</p>
+              <button className="btn-global" onClick={getEligibleWinners}>
+                Get
+              </button>
+              <div className="content">
+                {eligibleWinners.map((winner, index) => {
+                  return <p key={index}>{winner}</p>;
+                })}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="packs-container">
-        <div
-          className="action-info-section"
-          style={{ top: '16rem', margin: '1.5rem 0 0 1rem' }}
-        >
-          {/* Checks whether there is a pack selected by checking
+          <div className="packs-container">
+            <div
+              className="action-info-section"
+              style={{ top: '16rem', margin: '1.5rem 0 0 1rem' }}
+            >
+              {/* Checks whether there is a pack selected by checking
                 if a name exists within the global context */}
-          {activePack.packName ? (
-            <ActionInfoSection
-              packName={activePack.packName}
-              packPrice={activePack.packPrice}
-              packListingId={activePack.packListingId}
-              nftCount={activePack.nftIds.length}
-              packSeller={activePack.packSeller}
-              nftIds={activePack.nftIds}
-            />
-          ) : (
-            <NoPackSelected />
-          )}
-        </div>
-        <div className="user-packs">
-          {userNftPackListings.map((nftPackListing, index) => {
-            const {
-              name,
-              packImage,
-              packListingId,
-              packPrice,
-              packSeller,
-              nftIds,
-            } = nftPackListing.attributes;
-            let packImgUrl;
-            try {
-              packImgUrl = packImage._url;
-            } catch (error) {
-              console.log(error);
-            }
-            return (
-              <Card
-                key={index}
-                packName={`Name: ${name}`}
-                packImg={packImgUrl}
-                packPrice={`Price: ${Moralis.Units.FromWei(packPrice)}`}
-                packListingId={`Pack ID: ${packListingId}`}
-                packSeller={packSeller}
-                nftIds={nftIds.join(', ')}
-              />
-            );
-          })}
-        </div>
-        <div className="user-nfts">
-          {userOwnedNftsIds.map((nftId) => {
-            return <NFT address={userAddress.userAddress} tokenId={nftId} />;
-          })}
-        </div>
-      </div>
+              {activePack.packName ? (
+                <ActionInfoSection
+                  packName={activePack.packName}
+                  packPrice={activePack.packPrice}
+                  packListingId={activePack.packListingId}
+                  nftCount={activePack.nftIds.length}
+                  packSeller={activePack.packSeller}
+                  nftIds={activePack.nftIds}
+                />
+              ) : (
+                <div className="no-pack-selected">
+                  <h1>No Pack Selected</h1>
+                </div>
+              )}
+            </div>
+            <div className="user-packs">
+              {userNftPackListings.map((nftPackListing, index) => {
+                const {
+                  name,
+                  packImage,
+                  packListingId,
+                  packPrice,
+                  packSeller,
+                  nftIds,
+                } = nftPackListing.attributes;
+                let packImgUrl;
+                try {
+                  packImgUrl = packImage._url;
+                } catch (error) {}
+                return (
+                  <Card
+                    key={index}
+                    packName={`Name: ${name}`}
+                    packImg={packImgUrl}
+                    packPrice={`Price: ${Moralis.Units.FromWei(packPrice)}`}
+                    packListingId={`Pack ID: ${packListingId}`}
+                    packSeller={packSeller}
+                    nftIds={nftIds.join(', ')}
+                  />
+                );
+              })}
+            </div>
+            <div className="user-nfts">
+              {userOwnedNftsIds.map((nftId, index) => {
+                return (
+                  <NFT
+                    key={index}
+                    address={userAddress.userAddress}
+                    tokenId={nftId}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };
