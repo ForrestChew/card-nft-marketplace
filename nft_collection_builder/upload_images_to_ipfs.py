@@ -50,7 +50,7 @@ def upload_to_ipfs(
         file_hash = response.json()["Hash"]
         img_uri = f"http://ipfs.io/ipfs/{file_hash}?filename={img_name}"
         print(img_uri)
-        pin_data(img_bin)
+        pin_data(img_title, img_bin)
         return img_uri
 
 
@@ -58,7 +58,9 @@ def upload_to_ipfs(
 # PARAM:
 # data_to_pin: The data to get pinned to Pinata. For this script it will
 # be the NFT image, and the NFT metadata
+#   nft_count: The number of NFT currently being created. Used to label metadata.
 def pin_data(
+    nft_count,
     data_to_pin,
 ):
     pinata_url = "https://api.pinata.cloud/"
@@ -67,11 +69,24 @@ def pin_data(
         "pinata_api_key": os.getenv("PINATA_API_KEY"),
         "pinata_secret_api_key": os.getenv("PINATA_API_SECRET"),
     }
-    requests.post(
+    response = requests.post(
         pinata_url + endpoint,
-        files={"file": ("nft_image", data_to_pin)},
+        files={"file": ("nft_data", data_to_pin)},
         headers=headers,
     )
+    if isinstance(nft_count, int):
+        write_pinned_metadata_url(nft_count, response.json()["IpfsHash"])
+
+
+# Outputs pinned metadata url for "create-nft-collection" scripts to read from
+# PARAMS:
+# nft_count: The number of the current metadata url
+# nft_metadata: NFT metadata url  
+def write_pinned_metadata_url(nft_count, nft_metadata_url):
+    metadata_url_fp = f"./nft_metadata_urls/nft_metadata_url_{nft_count}.json"
+    nft_json = json.dumps(nft_metadata_url, indent=2)
+    with Path(metadata_url_fp).open("w") as metadata_url_dir:
+        metadata_url_dir.write(nft_json)
 
 
 # Creates and writes to "name", "description", and "image" fields in json files
@@ -89,7 +104,7 @@ def create_nft_metadata(nft_count, nft_name, nft_description, nft_image):
     nft_json = json.dumps(nft_metadata, indent=2)
     with Path(metadata_fp).open("w") as metadata_dir:
         metadata_dir.write(nft_json)
-    pin_data(nft_json)
+    pin_data(nft_count, nft_json)
     return nft_json
 
 
@@ -106,7 +121,7 @@ def build_nft_metadata(names_file, descriptions_file, nft_file_name, nft_amount)
         nft_name = get_nft_name(names_file, elem_idx)
         nft_description = get_nft_description(descriptions_file, elem_idx)
         nft_img_uri = upload_to_ipfs(
-            {nft_file_name}, elem_idx + 1, "jpg", "../../../Desktop/nft_imgs/"
+            nft_file_name, elem_idx + 1, "jpg", "../../../Desktop/nft_imgs/"
         )
         create_nft_metadata(elem_idx + 1, nft_name, nft_description, nft_img_uri)
         elem_idx += 1
