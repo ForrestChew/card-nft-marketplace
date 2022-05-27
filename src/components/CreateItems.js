@@ -18,6 +18,8 @@ const CreateItems = () => {
 
   const { Moralis } = useMoralis();
 
+  // Up loads target image from local storage into Moralis Database
+  // to be used as the pack listing image
   const uploadImage = async (e) => {
     e.preventDefault();
     const name = 'PackImg.png';
@@ -38,6 +40,7 @@ const CreateItems = () => {
     );
   };
 
+  // Interacts with Marketplace smart contract to list NFT pack on blockchain
   const listPackToSmartContract = async (packPrice, nftIds) => {
     const provider = Moralis.web3;
     const ethers = Moralis.web3Library;
@@ -55,6 +58,8 @@ const CreateItems = () => {
     );
   };
 
+  // Isolates user input info to pass as parameters to
+  //marketplace contract when listing an NFT pack
   const getInputInfoAndCallContract = (e) => {
     e.preventDefault();
     const nftIdsInput = document.getElementsByName('nftIdsArr');
@@ -63,10 +68,10 @@ const CreateItems = () => {
     // Splits into array since this value will be an argument for the marketplace
     // smart contract that takes in an array of NFT Ids
     const inputNftIdArr = nftIdsInput[0].value.split(' ');
-    // setPackPriceGloabl(packPriceVal);
     listPackToSmartContract(packPriceVal, inputNftIdArr);
   };
 
+  // Interacts with factory smart contract to allow users to mint NFTs
   const mintNft = async (e) => {
     e.preventDefault();
     const provider = Moralis.web3;
