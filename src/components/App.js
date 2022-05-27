@@ -12,11 +12,12 @@ import '../styles/main.css';
 const App = () => {
   const [userAddress, setUserAddress] = useState('');
   const { user, isAuthenticated } = useMoralis();
+
   useEffect(() => {
     if (isAuthenticated) {
       setUserAddress(user.get('ethAddress'));
     }
-  });
+  }, [user, isAuthenticated]);
 
   return (
     <>
