@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import { AppContext } from './Context';
-import Button from './Button';
 import '../styles/marketplace.css';
 
 const Card = ({
@@ -12,6 +11,7 @@ const Card = ({
   packSeller,
 }) => {
   const [activePack, setActivePack] = useContext(AppContext);
+  // Sets the active NFT within the global context
   const displayActivePack = () => {
     setActivePack({
       packName,
@@ -20,7 +20,6 @@ const Card = ({
       packListingId,
       nftIds,
       packSeller,
-      nftIds,
     });
   };
 
@@ -46,12 +45,12 @@ const Card = ({
             <span className="info-text">{packName}</span>
             <span className="info-text">{packPrice} Matic</span>
             <span className="info-text">{packListingId}</span>
-            {/* Labled here instead of component that passes props in order to set
-            NFT IDs in global context */}
             <span className="info-text">{`NFT IDs: ${nftIds}`}</span>
           </div>
           <div className="pack-btn">
-            <Button btnName="Details" onClick={() => displayActivePack()} />
+            <button className="btn-global" onClick={displayActivePack}>
+              Details
+            </button>
           </div>
         </div>
       </div>
