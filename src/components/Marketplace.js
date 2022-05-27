@@ -3,7 +3,6 @@ import { useMoralisQuery } from 'react-moralis';
 import { Moralis } from 'moralis';
 import { AppContext } from './Context';
 import IsLoading from './IsLoading';
-import NoPackSelected from './NoPackSelected';
 import Card from './Card';
 import ActionInfoSection from './ActionInfoSection';
 import '../styles/marketplace.css';
@@ -11,9 +10,9 @@ import '../styles/marketplace.css';
 const Marketplace = () => {
   const [nftPackListings, setNftPackListings] = useState([]);
   const [activePack] = useContext(AppContext);
-
   const { data, isLoading } = useMoralisQuery('NewPackListing');
 
+  // Gets and displays all NFT pack listings from database
   useEffect(() => {
     try {
       setNftPackListings(data);
@@ -79,7 +78,9 @@ const Marketplace = () => {
                 nftIds={activePack.nftIds}
               />
             ) : (
-              <NoPackSelected />
+              <div className="no-pack-selected">
+                <h1>No Pack Selected</h1>
+              </div>
             )}
           </div>
         </div>
