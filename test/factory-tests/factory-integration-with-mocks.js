@@ -107,8 +107,6 @@ describe('Card Nft factory integration with mocks', () => {
         1,
         accountTwo.address
       );
-      // Will return an empty array and 0 for the length
-      console.log(await cardFactory.getEligibleRewardWinners());
       expect(packAmount).to.equal(4);
     });
     it('Should remove accountTwos eligibility when eligibility has length > 1', async () => {
@@ -158,7 +156,6 @@ describe('Card Nft factory integration with mocks', () => {
         .transferFrom(accountTwo.address, accountOne.address, 3);
       const getEligibleRewardWinnersAfter =
         await cardFactory.getEligibleRewardWinners();
-      console.log('The Log', getEligibleRewardWinnersAfter);
       expect(getEligibleRewardWinnersAfter[0][0]).to.equal(
         accountThree.address
       );
