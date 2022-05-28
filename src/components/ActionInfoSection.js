@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useMoralis } from 'react-moralis';
-import { NFT } from 'web3uikit';
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import {
   marketplaceAddress,
@@ -19,6 +18,7 @@ const ActionInfoSection = ({
   nftIds,
 }) => {
   const [currentImgIdx, setCurrentImgIdx] = useState(0);
+  const [nftUri, setNftUri] = useState('');
   const [nftRarity, setNftRarity] = useState('');
   const [nftSetId, setNftSetId] = useState(0);
   const nftIdsArr = nftIds.split(' ');
@@ -47,6 +47,19 @@ const ActionInfoSection = ({
     return cardMarketplace;
   };
 
+  // Gets NFT URI
+  useEffect(() => {
+    const getUri = async () => {
+      const cardFactory = await getContractFactoryInstance();
+      const uri = await cardFactory.tokenURI(nftIdsIsolation);
+      fetch(uri).then(async (res) => {
+        const resJson = await res.json();
+        setNftUri(resJson.image);
+      });
+    };
+    getUri();
+  }, [currentImgIdx]);
+
   // Gets and displays rarity of the active NFT in carousel
   useEffect(() => {
     const getNftRarity = async () => {
@@ -71,7 +84,8 @@ const ActionInfoSection = ({
   const removeDatabaseEntry = async () => {
     const PackListings = Moralis.Object.extend('NewPackListing');
     const query = new Moralis.Query(PackListings);
-    query.equalTo('packListingId', packListingId);
+    console.log(packListingId);
+    query.equalTo('packListingId', packListingId.replace('Pack ID: ', ''));
     query.equalTo('name', packName);
     const queryFound = await query.find();
     await queryFound[0].destroy().then(
@@ -87,13 +101,15 @@ const ActionInfoSection = ({
   // Interacts with Marketplace smart contract to buy pack
   const buyPack = async () => {
     const cardMarketplace = await getContractMarketplaceInstance();
+    console.log(packSeller);
+    console.log(packListingId.replace('Pack ID: ', ''));
     await cardMarketplace
-      .buyNftPack(packListingId, packSeller, {
+      .buyNftPack(packListingId.replace('Pack ID: ', ''), packSeller, {
         value: Moralis.Units.ETH(packPrice),
         gasLimit: 1000000,
       })
       .then(() => {
-        removeDatabaseEntry();
+        // removeDatabaseEntry();
       });
   };
 
@@ -128,13 +144,7 @@ const ActionInfoSection = ({
             <span>NFT Set ID: {parseInt(nftSetId)}</span>
             <span>NFT Rarity: {nftRarity}</span>
           </div>
-          <NFT
-            address={factoryAddress}
-            chain="mumbai"
-            tokenId={nftIdsIsolation}
-            fetchMetadata="true"
-            className="nft-img"
-          />
+          <img src={nftUri} height="196" width="256"></img>
         </div>
         <div className="footer">
           <button className="buy-btn" onClick={() => buyPack()}>

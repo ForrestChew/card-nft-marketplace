@@ -1,7 +1,7 @@
 const { ethers } = require('hardhat');
 const { getCardMarketplaceInstance } = require('../utils.js');
 
-const ONE_ETHER = ethers.utils.parseEther('1');
+const ONE_ETHER = ethers.utils.parseEther('3');
 
 const listPack = async (tokenIdsToMint, name) => {
   const cardMarketplace = await getCardMarketplaceInstance();
@@ -10,13 +10,11 @@ const listPack = async (tokenIdsToMint, name) => {
     tokenIdsToMint,
     name
   );
-  console.log('-'.padEnd(42, '-'));
   console.log(listPackReceipt);
-  console.log('-'.padEnd(42, '-'));
   console.log('Pack Minted');
 };
 
-listPack([28, 29, 30], 'Test_7')
+listPack([1], 'First Pack')
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);

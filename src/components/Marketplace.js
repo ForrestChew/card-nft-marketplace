@@ -46,24 +46,15 @@ const Marketplace = () => {
               return (
                 <Card
                   key={index}
-                  packName={`Name: ${name}`}
+                  packName={`${name}`}
                   packImg={packImgUrl}
-                  packPrice={`Price: ${Moralis.Units.FromWei(packPrice)}`}
+                  packPrice={`${Moralis.Units.FromWei(packPrice)}`}
                   packListingId={`Pack ID: ${packListingId}`}
                   packSeller={packSeller}
                   nftIds={nftIds.join(', ')}
                 />
               );
             })}
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
           </div>
           <div className="action-info-section">
             {/* Checks whether there is a pack selected by checking

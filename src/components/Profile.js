@@ -6,7 +6,6 @@ import {
 } from '../contract-info/marketplace-info';
 import { factoryAddress, factoryAbi } from '../contract-info/factory-info';
 import { AppContext } from './Context';
-import { NFT } from 'web3uikit';
 import IsLoading from './IsLoading';
 import ActionInfoSection from './ActionInfoSection';
 import Card from './Card';
@@ -23,8 +22,8 @@ const Profile = (userAddress) => {
   const [nftRarity, setNftRarity] = useState('...');
   const [amountOfNftsPerSet, setAmountOfNftsPerSet] = useState(0);
   const [userNftPackListings, setUserNftPackListings] = useState([]);
-  const [userOwnedNftsIds, setUserOwnedNftsIds] = useState([]);
   const [eligibleWinners, setEligibleWinners] = useState([]);
+  const [nftUris, setNftUris] = useState([]);
   // The user input address the user wants to see pack listings from
   const [listingsOwner, setListingsOwner] = useState('');
   const [listingIds, setListingIds] = useState([]);
@@ -41,19 +40,28 @@ const Profile = (userAddress) => {
     hasFetchedData.current = false;
   }, []);
 
+  // Gets metadata based off an input token ID
+  const getNftMetadata = async (tokenId) => {
+    const cardFactory = await getContractFactoryInstance();
+    const nftMetaData = await cardFactory.tokenURI(tokenId);
+    await fetch(nftMetaData).then(async (res) => {
+      const resJson = await res.json();
+      setNftUris((nftUris) => [...nftUris, resJson.image]);
+    });
+  };
+
   // Gets and displays user owned NFTs that come from the card factory address
   useEffect(() => {
     const getUserNfts = async () => {
+      setNftUris([]);
       try {
         const userNfts = await Moralis.Web3API.account.getNFTsForContract({
           chain: 'mumbai',
           token_address: factoryAddress,
         });
         userNfts.result.forEach((nftId) => {
-          setUserOwnedNftsIds((userOwnedNftsIds) => [
-            ...userOwnedNftsIds,
-            nftId.token_id,
-          ]);
+          getNftMetadata(nftId.token_id);
+          console.log(nftId);
         });
         setIsLoadingNfts(false);
       } catch (e) {
@@ -313,8 +321,10 @@ const Profile = (userAddress) => {
                 let packImgUrl;
                 try {
                   packImgUrl = packImage._url;
-                } catch (error) {}
-                return (
+                } catch (error) {
+                  console.log(error);
+                }
+                return packSeller == userAddress.userAddress ? (
                   <Card
                     key={index}
                     packName={`Name: ${name}`}
@@ -324,17 +334,22 @@ const Profile = (userAddress) => {
                     packSeller={packSeller}
                     nftIds={nftIds.join(', ')}
                   />
+                ) : (
+                  ''
                 );
               })}
             </div>
             <div className="user-nfts">
-              {userOwnedNftsIds.map((nftId, index) => {
+              {nftUris.map((uri, index) => {
                 return (
-                  <NFT
+                  <img
                     key={index}
-                    address={userAddress.userAddress}
-                    tokenId={nftId}
-                  />
+                    style={{ padding: '1rem' }}
+                    className="nft-pack-img"
+                    src={uri}
+                    height="196"
+                    width="256"
+                  ></img>
                 );
               })}
             </div>

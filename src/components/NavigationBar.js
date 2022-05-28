@@ -10,15 +10,6 @@ const NavigationBar = () => {
             navData.isActive ? 'list-item-active' : 'list-item'
           }
           to="/"
-          end
-        >
-          About
-        </NavLink>
-        <NavLink
-          className={(navData) =>
-            navData.isActive ? 'list-item-active' : 'list-item'
-          }
-          to="/marketplace"
         >
           Marketplace
         </NavLink>

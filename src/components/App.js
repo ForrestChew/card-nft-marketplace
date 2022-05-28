@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom';
 import { ConnectButton } from 'web3uikit';
 import { useMoralis } from 'react-moralis';
 import NavigationBar from './NavigationBar';
-import About from './About';
 import Marketplace from './Marketplace';
 import CreateItems from './CreateItems';
 import Profile from './Profile';
@@ -26,8 +25,7 @@ const App = () => {
         <ConnectButton />
       </div>
       <Routes>
-        <Route path="/" element={<About />} />
-        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/" element={<Marketplace />} />
         <Route path="create-items" element={<CreateItems />} />
         <Route
           path="/profile"

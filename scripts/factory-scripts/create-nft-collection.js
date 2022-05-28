@@ -16,10 +16,11 @@ const nftRarity = [
 ];
 
 // Retuns NFT Pinata URL to mint into NFT
-const getNftPinataUrl = (metadataNum) => {
-  let metadataHashPath = `../../nft_collection_builder/nft_metadata_urls/nft_metadata_url_${metadataNum}.json`;
-  const metadataHash = require(metadataHashPath);
-  const pinataUrl = 'https://gateway.pinata.cloud/ipfs/' + metadataHash;
+const getNftPinataUrl = (nftMetadataId) => {
+  let metadataHashPath = `../../nft_collection_builder/nft_metadata_urls/nft_metadata_url_${nftMetadataId}.json`;
+  let metadataHash = require(metadataHashPath);
+  let pinataUrl = 'https://gateway.pinata.cloud/ipfs/' + metadataHash;
+  console.log(pinataUrl);
   return pinataUrl;
 };
 
@@ -27,17 +28,18 @@ const getNftPinataUrl = (metadataNum) => {
 const mint = async (
   nftRarity,
   packId,
-  nftId,
-  CARD_MARKETPLACE_ADDR,
-  cardFactory
+  nftMetadataId,
+  cardMarketplaceAddress
 ) => {
-  const nftUri = getNftPinataUrl(nftId);
-  await cardFactory.createNFTWithApprovalAdminPack(
+  let nftUri = getNftPinataUrl(nftMetadataId);
+  const cardFactory = await getCardFactoryInstance();
+  const tx = await cardFactory.createNFTWithApprovalAdminPack(
     nftUri,
     nftRarity,
     packId,
-    CARD_MARKETPLACE_ADDR
+    cardMarketplaceAddress
   );
+  console.log('Token Minted', tx, 'ID:', nftMetadataId);
 };
 
 // Picks rarity to assign each minted NFT
@@ -49,31 +51,24 @@ const randomRarity = () => {
 
 // Picks rarities for NFTs then call mint functions
 const mintCollectionWithPacksAdmin = async (amountOfPacks) => {
-  const cardFactory = await getCardFactoryInstance();
-  const nftRarityAmounts = { Iron: 0, Gold: 0, Diamond: 0 };
   // Will mint x total NFTs. amountOfPacks * 5 = total amount of NFTs to mint
+  let nftMetadataId = 1;
   for (let packId = 1; packId <= amountOfPacks; packId++) {
     for (let nftId = 1; nftId <= 5; nftId++) {
       let rarity = randomRarity();
-      let nftRarity;
-      if (rarity == 'Iron') {
-        nftRarity = 'Iron';
-        nftRarityAmounts['Iron'] += 1;
-      } else if (rarity == GOLD_URI) {
-        rarity = 'Gold';
-        nftRarityAmounts['Gold'] += 1;
-      } else {
-        rarity = 'Diamond';
-        nftRarityAmounts['Diamond'] += 1;
-      }
-      await mint(nftRarity, packId, nftId, marketplaceAddress, cardFactory);
+      let nftRarity = '';
+      if (rarity == 'Iron') nftRarity = 'Iron';
+      if (rarity == 'Gold') nftRarity = 'Gold';
+      if (rarity == 'Diamond') nftRarity = 'Diamond';
+      const tx = await mint(
+        nftRarity,
+        packId,
+        nftMetadataId,
+        marketplaceAddress
+      );
+      nftMetadataId++;
     }
   }
-  console.log('-'.padEnd(42, '-'));
-  console.log('TOTAL:');
-  console.log('Iron amount:', nftRarityAmounts['Iron']);
-  console.log('Gold amount:', nftRarityAmounts['Gold']);
-  console.log('Diamond amount:', nftRarityAmounts['Diamond']);
 };
 
 // Adjust param for total amount of packs to be minted
