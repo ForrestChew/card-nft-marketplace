@@ -14,9 +14,10 @@ Each NFT created in the factory smart contract has one of three rarities assigne
 1) Moralis Server
 2) Web3 provider - Alchemy, Infura, etc....
 3) Private Key
-4) Polygon api key
+4) Polygonscan API key
 5) VRF Subscription (Funded with LINK)
-6) IPFS CLI
+6) IPFS Command Line
+7) Pinata API key and API Secret
 
 # Set up steps 
 ## 1) Clone Repository
@@ -40,23 +41,23 @@ In the root of project, add a .env file with the following fields:
 ```
 npx hardhat run scripts/factory-scripts/deploy-factory.js --network mumbai
 ```
-Before deploying the marketplace smart contract, add the address and ABI of factory smart contract to the 
+Before deploying the CardMarketplace smart contract, add the address and ABI of CardFactory smart contract to the 
 `root/src/contract-info/factory-info.js` file. Various pieces of the project depend on this information being accurate.
 ```
 npx hardhat run scripts/marketplace-scripts/deploy-marketplace.js --network mumbai
 ```
-Add the marketplace address and ABI to the `root/src/contract-info/marketplace-info.js` file.
-## 5) Set Marketplace address in factory
-Link the factory smart contracat with marketplace smart contract.
+Add the CardMarketplace address and ABI to the `root/src/contract-info/marketplace-info.js` file.
+## 5) Set the CardMarketplace address in CardFactory
+Link the CardFactory smart contracat with CardMarketplace smart contract.
 ```
 npx hardhat run scripts/factory-scripts/set-marketplace-address.js --network mumbai
 ```
 ## 6) Verify Smart Contracts
-Verify Marketplace smart contract.
+Verify CardMarketplace smart contract.
 ```
 npx hardhat verify <MARKETPLACE_ADDRESS> <"YOUR_ADDRESS"> <"FACTORY_ADDRESS"> --network mumbai
 ```
-Verify Factory smart contract.
+Verify CardFactory smart contract.
 ```
 npx hardhat verify <FACTORY_ADDRESS> "Cards Collection" "CC" "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed" "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f" <"CALL_BACK_GAS_LIMIT"> <"VRF_SUBSCRIPTION_ID"> <"REQUEST_CONFIRMATIONS"> --network mumbai
 ```
@@ -76,28 +77,32 @@ Then run:
 ```
 python nft_collection_builder/create_collection_metadata.py
 ```
-If the above steps were followed correctly your terminal output should look like:
-ADD PHOTO <br>
-And two directories should be created, one with each NFTs metadata, the other with hashse of your Pinata url.
-ADD PHOTO <br>
+If the above steps were followed correctly your terminal output should look like: <br>
+![](./ReadMePhotos/ipfs_upload.png "IPFS links to images")
+ <br>
+And two directories should be created, one with each NFTs metadata, the other with hashse of your Pinata url. <br>
+![](./ReadMePhotos/metadata_save.png "Metadata created")
+<br>
 ## Step 8) Mint NFTs
 To mint the NFT meta data, run the command:
 ```
 npx hardhat run scripts/factory-scripts/create-nft-collection.js --network mumbai
 ```
 The reason NFTs are not minted in the script that generates the metadata, is to seperate functionality that interacts with any smart contract. This is done to minimize errors that could arrise while minting. <br>
-A successful mint should look like:
-ADD PHOTO
-ADD POLYSCAN PHOTO
+A successful mint should look like: <br>
+![](./ReadMePhotos/successful_mint.png "Terminal output after successful mint") 
+<br>
+![](./ReadMePhotos/polyscan_confirmations.png "NFT creation confirmations on Polyscan") 
+<br>
 The function used to mint the NFT metadata is the `createNFTWithApprovalAdminPack`. This function took four arguments: <br>
 - The NFT Uri
 - The NFT rarity 
 - The Set ID
-- The address of the marketplace smart contract
+- The address of the CardMarketplace smart contract
 ## Step 9) Configure your Moralis Server
 Create and configure a Moralis server to be on the Mumbai network. Documentation can be found: <br>
-https://docs.moralis.io/moralis-dapp/getting-started
-Create an event sync in your Moralis server to listen to the `NewPackListing` event omitted from the marketplace smart contract. Documentation can be found: <br>
+https://docs.moralis.io/moralis-dapp/getting-started <br>
+Create an event sync in your Moralis server to listen to the `NewPackListing` event omitted from the CardMarketplace smart contract. Documentation can be found: <br>
 https://docs.moralis.io/moralis-dapp/automatic-transaction-sync/smart-contract-events
 ## Step 10) Start Front-end
 ```
@@ -107,8 +112,10 @@ npm start
 
 The front-end of this project serves as an interface for users to interact with the protocol, and there are three main components. <br> 
 ## 1) Marketplace:
-Users can browse packs they would like to buy. They can also view the contents of the pack to check what NFTs are inside. When a pack is listed, the Moralis server picks up the `NewPackListing` event omitted from the CardMarketplace smart contract. A table is then created with the fields from omitted event. These tables are then queried from the front-end to be displayed.
-ADD PHOTO
+Users can browse packs they would like to buy. They can also view the contents of the pack to check what NFTs are inside. When a pack is listed, the Moralis server picks up the `NewPackListing` event omitted from the CardMarketplace smart contract. A table in Moralis is then created with the fields from omitted event. These tables are then queried from Moralis and displayed by the front-end. <br>
+Clicking the `details` button will display the contents of the pack on the right. <br>
+![](./ReadMePhotos/marketplace_packs.png "NFT Pack Listings")
+<br>
 Each pack will display: <br>
 - Pack image - The image shown on the pack.
 - Pack Name - The name of the pack.
@@ -116,34 +123,38 @@ Each pack will display: <br>
 - Pack ID - The ID of the pack.
 - NFT IDs - The NFT ids that the pack contains.
 - Details button - Displays pack info on click. <br>
-All of these fields are set by the pack lister.
-Clicking the `details` button will display the contents of the pack.
-ADD PHOTO
-You can use the arrows to switch between the NFTs contained within the pack for more information on that specific NFT. If you would like to buy the NFT, simply click the `Buy` button.
-ADD BUY BTN PHOTO
-Once the transaction has completed, the pack seller will receive 97% of the total cost, while the marketplace owner receives a 3% transaction fee and the buyer will receieve all NFTs contained in the pack. The table pack listing in the Moralis server will then be deleted.
+All of these fields are set by the pack lister when they list a pack. <br>
+![](./ReadMePhotos/pack_contents.png "Information about Pack and it's NFTs are displayed") <br> 
+<br>
+You can use the arrows to switch between the NFTs contained within the pack for more information on that specific NFT. If you would like to buy the NFT, simply click the `Buy Pack` button. <br>
+
+![](./ReadMePhotos/buy_btn_clicked.png "Result of clicking Buy Pack button")
+
+Once the transaction has completed, the pack seller will receive 97% of the total cost, while the CardMarketplace owner receives a 3% transaction fee and the buyer will receieve all NFTs contained in the pack. The table pack listing in the Moralis server will then be deleted.
+
 ## 2) Create Items: <br>
-This is where users can create an NFT pack, preview it, and list it for sale. Users can also mint an Iron NFT provided they already have a metadata URI.
-ADD PHOTO
+This is where users can create an NFT pack, preview it, and list it for sale. Users can also mint an Iron NFT provided they already have a metadata URI. 
+![](./ReadMePhotos/create_items.png "User can create marketplace items")
+
 As the user inputs information into the form, the pack preview will update dynamically to reflect the users's changes. The NFT IDs should be seperated with a space. The user must click the `List Pack` button before clicking the `Set Image` button. <br>
 Users can also mint Iron NFTs provided they have a URI. They just need to input the URI into the box and click `MINT!`.
 
 ## 3) Profile: 
-The profile tab will show a user NFT packs that they have listed, and it will show them owned NFTs that were created in the ERC721 CardFactory smartcontract. 
-ADD PHOTO OF PROFILE
+The profile tab will show a user their NFT packs that they have listed. It will show them owned NFTs that were created in the ERC721 CardFactory smart contract. <br>
+![](./ReadMePhotos/profile.png "Users profile")
+<br>
 In addition, it will give users options to: 
 - Check how many NFTs you own in a set. 
 - Check the rarity of an NFT based on the input token ID.  
-- Verify that you have a complete NFT set to become eligible for rewards. 
+- Verify that you have a complete NFT set. If you do you will be added to the eligible winners array in the CardFactory smart contract.  
 - View listing pack IDs that an input address is selling. 
-- View addresses who are eligible for rewards. 
-ADD PHOTO OF OPTIONS STRIP
-
+- View addresses who are eligible for rewards. <br>
+![](./ReadMePhotos/options_strip.png "User options")
 # Rewards 
-When a user has a complete set of NFTs (meaning they have 5 NFTs that belong to the same set ID), they can then use the `Set ID to Verify` input box to become eligible for rewards. For every set a user has completed, their address will be added into the `s_addressesEligibleForRewards` array Whenever they transfer an NFT belonging to that set, their address will be shifted, and then popped off the end of the array. This is how the rewards multiplier works (although a naive implementation). <br>
-When the projects owner decides to distribute rewards, they call a Chainlink VRF Oracle and request `s_addressesEligibleForRewards.length / 5 + 1` amount of values to be returned. This ensures that the number of winners in a reward distribution cycle is one winner for every five addresses eligible. The only exception is that `<=` four addresses in the array have a change to receive one reward. The winning addresses(es) are selected by the indexes at which the random values returned from oracle map to. The mumbers returned will be any positive integer, as it is modified to fit `s_addressesEligibleForRewards.length - 1`, thereby, ensuring an address within the bounds of the winners array is selected. <br>
+When a user has a complete set of NFTs (meaning they have 5 NFTs that belong to the same set ID), they can then use the `Set ID to Verify` input box to become eligible for rewards. For every set a user has completed, their address will be added into the `s_addressesEligibleForRewards` array. Whenever they transfer an NFT belonging to a complete set, their address will removed from the array. This is how the rewards multiplier works (although a naive implementation). <br>
+When the projects owner decides to distribute rewards, they call a Chainlink VRF Oracle and request `s_addressesEligibleForRewards.length / 5 + 1` amount of values to be returned. This ensures that the number of winners in a reward distribution cycle is one winner for every five addresses eligible. The only exception is that `<=` four addresses in the array have a chance to receive one reward. The winning addresses(es) are selected by the indexes at which the random values returned from oracle map to. The mumbers returned will be any positive integer, as it is modified to fit `s_addressesEligibleForRewards.length - 1`, thereby, ensuring an address within the bounds of the winners array is selected. <br>
 All rewards come in the form of NFTs created by the projects owner. <br>
-As the project owner, to request a random number, make sure you have a VRF subscription, have funded it with Mumbai LINK and connected your CardFactory smart contract to it. <br> Documentation can be found: <br>
+As the project owner, to request a random number, make sure you have a VRF subscription, have funded it with Mumbai LINK, and connected your CardFactory smart contract to it. <br> Documentation can be found: <br>
 General VRF Docs: https://docs.chain.link/docs/get-a-random-number/ <br>
 VRF Subscription page: https://vrf.chain.link/mumbai <br>
 Once that is complete, run the command: 
@@ -155,7 +166,7 @@ Once the numbers are returned, the owner can call the `distributeRewards([tokenI
 npx hardhat run scripts/factory-scripts/distribute-rewards.js --network mumbai
 ```
 # Testing
-To test bot the CardFactory smart contract and the CardMarketplace contract, run the command: br>
+To test both the CardFactory smart contract and the CardMarketplace smart contract, run the command: br>
 ```
 npx hardhat test
 ```
